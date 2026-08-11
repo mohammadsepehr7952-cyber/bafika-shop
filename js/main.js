@@ -4,21 +4,26 @@
    فیلتر محصولات، فرم تماس، و ثبت سفارش از طریق اینستاگرام.
    ========================================================== */
 
-/* ---------- ۱) داده محصولات ---------- */
+/* ---------- ۱) داده محصولات ----------
+   برای هر محصول می‌تونی یک یا چند عکس بذاری:
+   images: ["img/products/table1-1.jpg", "img/products/table1-2.jpg"]
+   - اگه بیشتر از یک عکس بذاری، خودکار روی کارت محصول اسلایدر (فلش/نقطه) نشون داده می‌شه
+   - اگه آرایه رو خالی [] بذاری، همون آیکون کلاف نخ به‌عنوان جایگزین نمایش داده می‌شه
+------------------------------------------------- */
 const PRODUCTS = [
-  { id: 1, name: "رومیزی بافت دایره‌ای گلدار",   cat: "table",    catLabel: "رومیزی",     price: 320000, color: "#8C3B3B" },
-  { id: 2, name: "رومیزی بافت مستطیلی کرمی",     cat: "table",    catLabel: "رومیزی",     price: 380000, color: "#C99A3E" },
-  { id: 3, name: "رانر رومیزی بافت طرح گل",       cat: "table",    catLabel: "رومیزی",     price: 260000, color: "#5B6E4D" },
-  { id: 4, name: "ست جالیوانی بافت ۶ عددی",       cat: "cupholder", catLabel: "جالیوانی",   price: 210000, color: "#6E2C2C" },
-  { id: 5, name: "جالیوانی بافت طرح تک‌گل",        cat: "cupholder", catLabel: "جالیوانی",   price: 65000,  color: "#8C3B3B" },
-  { id: 6, name: "ست زیرلیوانی بافت ۴ عددی",      cat: "coaster",  catLabel: "زیرلیوانی",  price: 145000, color: "#5C4F3F" },
-  { id: 7, name: "زیرلیوانی بافت رنگارنگ",         cat: "coaster",  catLabel: "زیرلیوانی",  price: 40000,  color: "#C99A3E" },
-  { id: 8, name: "تل مو بافت پهن زمستانی",         cat: "headband", catLabel: "تل مو",      price: 165000, color: "#8C3B3B" },
-  { id: 9, name: "تل مو بافت گره‌دار",              cat: "headband", catLabel: "تل مو",      price: 150000, color: "#5B6E4D" },
-  { id: 10, name: "رومبلی بافت ست سه‌تکه",         cat: "sofa",     catLabel: "رومبلی",     price: 690000, color: "#6E2C2C" },
-  { id: 11, name: "رومبلی بافت طرح لوزی",          cat: "sofa",     catLabel: "رومبلی",     price: 590000, color: "#8C3B3B" },
-  { id: 12, name: "اشارپ بافت سبک پاییزی",         cat: "scarf",    catLabel: "اشارپ",      price: 340000, color: "#C99A3E" },
-  { id: 13, name: "اشارپ بافت دورنگ کرم-زرشکی",    cat: "scarf",    catLabel: "اشارپ",      price: 365000, color: "#8C3B3B" },
+  { id: 1, name: "رومیزی بافت دایره‌ای گلدار",   cat: "table",    catLabel: "رومیزی",     price: 320000, color: "#8C3B3B", images: [] },
+  { id: 2, name: "رومیزی بافت مستطیلی کرمی",     cat: "table",    catLabel: "رومیزی",     price: 380000, color: "#C99A3E", images: [] },
+  { id: 3, name: "رانر رومیزی بافت طرح گل",       cat: "table",    catLabel: "رومیزی",     price: 260000, color: "#5B6E4D", images: [] },
+  { id: 4, name: "ست جالیوانی بافت ۶ عددی",       cat: "cupholder", catLabel: "جالیوانی",   price: 210000, color: "#6E2C2C", images: [] },
+  { id: 5, name: "جالیوانی بافت طرح تک‌گل",        cat: "cupholder", catLabel: "جالیوانی",   price: 65000,  color: "#8C3B3B", images: [] },
+  { id: 6, name: "ست زیرلیوانی بافت ۴ عددی",      cat: "coaster",  catLabel: "زیرلیوانی",  price: 145000, color: "#5C4F3F", images: [] },
+  { id: 7, name: "زیرلیوانی بافت رنگارنگ",         cat: "coaster",  catLabel: "زیرلیوانی",  price: 40000,  color: "#C99A3E", images: [] },
+  { id: 8, name: "تل مو بافت پهن زمستانی",         cat: "headband", catLabel: "تل مو",      price: 165000, color: "#8C3B3B", images: [] },
+  { id: 9, name: "تل مو بافت گره‌دار",              cat: "headband", catLabel: "تل مو",      price: 150000, color: "#5B6E4D", images: [] },
+  { id: 10, name: "رومبلی بافت ست سه‌تکه",         cat: "sofa",     catLabel: "رومبلی",     price: 690000, color: "#6E2C2C", images: [] },
+  { id: 11, name: "رومبلی بافت طرح لوزی",          cat: "sofa",     catLabel: "رومبلی",     price: 590000, color: "#8C3B3B", images: [] },
+  { id: 12, name: "اشارپ بافت سبک پاییزی",         cat: "scarf",    catLabel: "اشارپ",      price: 340000, color: "#C99A3E", images: [] },
+  { id: 13, name: "اشارپ بافت دورنگ کرم-زرشکی",    cat: "scarf",    catLabel: "اشارپ",      price: 365000, color: "#8C3B3B", images: [] },
 ];
 
 const CATEGORIES = [
@@ -121,6 +126,69 @@ function showToast(message) {
 }
 
 /* ---------- ۵) رندر گرید محصولات (برای صفحه اصلی و صفحه محصولات) ---------- */
+function productThumbHtml(p) {
+  const hasImages = Array.isArray(p.images) && p.images.length > 0;
+
+  if (!hasImages) {
+    return `
+      <div class="product-thumb" style="background:${p.color}14;">
+        ${yarnSvg(p.color)}
+      </div>`;
+  }
+
+  if (p.images.length === 1) {
+    return `
+      <div class="product-thumb">
+        <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
+      </div>`;
+  }
+
+  const slidesHtml = p.images.map((src, i) => `
+    <img src="${src}" alt="${p.name}" loading="lazy" class="slide ${i === 0 ? "active" : ""}" data-slide-index="${i}">
+  `).join("");
+  const dotsHtml = p.images.map((_, i) => `
+    <button class="car-dot ${i === 0 ? "active" : ""}" data-dot-index="${i}" aria-label="عکس ${i + 1}"></button>
+  `).join("");
+
+  return `
+    <div class="product-thumb carousel" data-carousel data-index="0" data-count="${p.images.length}">
+      ${slidesHtml}
+      <button type="button" class="car-arrow prev" data-car-prev aria-label="عکس قبلی">‹</button>
+      <button type="button" class="car-arrow next" data-car-next aria-label="عکس بعدی">›</button>
+      <div class="car-dots">${dotsHtml}</div>
+    </div>`;
+}
+
+function initCarousels(container) {
+  container.querySelectorAll("[data-carousel]").forEach((car) => {
+    const count = Number(car.dataset.count);
+    const slides = car.querySelectorAll(".slide");
+    const dots = car.querySelectorAll(".car-dot");
+
+    function goTo(index) {
+      const next = (index + count) % count;
+      car.dataset.index = next;
+      slides.forEach((s) => s.classList.toggle("active", Number(s.dataset.slideIndex) === next));
+      dots.forEach((d) => d.classList.toggle("active", Number(d.dataset.dotIndex) === next));
+    }
+
+    car.querySelector("[data-car-prev]").addEventListener("click", (e) => {
+      e.preventDefault();
+      goTo(Number(car.dataset.index) - 1);
+    });
+    car.querySelector("[data-car-next]").addEventListener("click", (e) => {
+      e.preventDefault();
+      goTo(Number(car.dataset.index) + 1);
+    });
+    dots.forEach((d) => {
+      d.addEventListener("click", (e) => {
+        e.preventDefault();
+        goTo(Number(d.dataset.dotIndex));
+      });
+    });
+  });
+}
+
 function renderProductGrid(container, list) {
   if (!container) return;
   if (list.length === 0) {
@@ -129,9 +197,7 @@ function renderProductGrid(container, list) {
   }
   container.innerHTML = list.map((p) => `
     <article class="product-card">
-      <div class="product-thumb" style="background:${p.color}14;">
-        ${yarnSvg(p.color)}
-      </div>
+      ${productThumbHtml(p)}
       <div class="product-body">
         <span class="product-cat">${p.catLabel}</span>
         <h3 class="product-name">${p.name}</h3>
@@ -143,6 +209,8 @@ function renderProductGrid(container, list) {
       </div>
     </article>
   `).join("");
+
+  initCarousels(container);
 
   container.querySelectorAll("[data-add]").forEach((btn) => {
     btn.addEventListener("click", () => {

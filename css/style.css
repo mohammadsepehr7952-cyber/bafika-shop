@@ -205,7 +205,34 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
   overflow:hidden;display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s;
 }
 .product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
-.product-thumb{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;}
+.product-thumb{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.product-thumb img{width:100%;height:100%;object-fit:cover;}
+
+/* ---------- اسلایدر عکس محصول ---------- */
+.product-thumb.carousel{background:var(--surface);}
+.product-thumb.carousel .slide{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .25s;
+}
+.product-thumb.carousel .slide.active{opacity:1;position:relative;}
+.car-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+  width:30px;height:30px;border-radius:50%;border:none;
+  background:rgba(43,36,25,.55);color:#fff;font-size:1.2rem;line-height:1;
+  display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .18s;
+}
+.product-thumb.carousel:hover .car-arrow{opacity:1;}
+.car-arrow.prev{right:8px;}
+.car-arrow.next{left:8px;}
+.car-dots{
+  position:absolute;bottom:8px;right:0;left:0;z-index:2;
+  display:flex;justify-content:center;gap:6px;
+}
+.car-dot{
+  width:7px;height:7px;border-radius:50%;border:none;background:rgba(255,255,255,.6);
+  padding:0;
+}
+.car-dot.active{background:#fff;}
 .product-body{padding:16px 18px 20px;display:flex;flex-direction:column;gap:8px;flex:1;}
 .product-cat{font-size:.78rem;color:var(--moss);font-weight:700;}
 .product-name{font-size:1.05rem;font-weight:700;}
