@@ -1,0 +1,528 @@
+/* ==========================================================
+   bafika | js/main.js
+   همه‌ی منطق سایت اینجاست: داده محصولات، سبد خرید (localStorage)،
+   فیلتر محصولات، فرم تماس، و ثبت سفارش از طریق اینستاگرام.
+   ========================================================== */
+
+/* ---------- ۱) داده محصولات ---------- */
+const PRODUCTS = [
+  { id: 1, name: "رومیزی بافت دایره‌ای گلدار",   cat: "table",    catLabel: "رومیزی",     price: 320000, color: "#8C3B3B" },
+  { id: 2, name: "رومیزی بافت مستطیلی کرمی",     cat: "table",    catLabel: "رومیزی",     price: 380000, color: "#C99A3E" },
+  { id: 3, name: "رانر رومیزی بافت طرح گل",       cat: "table",    catLabel: "رومیزی",     price: 260000, color: "#5B6E4D" },
+  { id: 4, name: "ست جالیوانی بافت ۶ عددی",       cat: "cupholder", catLabel: "جالیوانی",   price: 210000, color: "#6E2C2C" },
+  { id: 5, name: "جالیوانی بافت طرح تک‌گل",        cat: "cupholder", catLabel: "جالیوانی",   price: 65000,  color: "#8C3B3B" },
+  { id: 6, name: "ست زیرلیوانی بافت ۴ عددی",      cat: "coaster",  catLabel: "زیرلیوانی",  price: 145000, color: "#5C4F3F" },
+  { id: 7, name: "زیرلیوانی بافت رنگارنگ",         cat: "coaster",  catLabel: "زیرلیوانی",  price: 40000,  color: "#C99A3E" },
+  { id: 8, name: "تل مو بافت پهن زمستانی",         cat: "headband", catLabel: "تل مو",      price: 165000, color: "#8C3B3B" },
+  { id: 9, name: "تل مو بافت گره‌دار",              cat: "headband", catLabel: "تل مو",      price: 150000, color: "#5B6E4D" },
+  { id: 10, name: "رومبلی بافت ست سه‌تکه",         cat: "sofa",     catLabel: "رومبلی",     price: 690000, color: "#6E2C2C" },
+  { id: 11, name: "رومبلی بافت طرح لوزی",          cat: "sofa",     catLabel: "رومبلی",     price: 590000, color: "#8C3B3B" },
+  { id: 12, name: "اشارپ بافت سبک پاییزی",         cat: "scarf",    catLabel: "اشارپ",      price: 340000, color: "#C99A3E" },
+  { id: 13, name: "اشارپ بافت دورنگ کرم-زرشکی",    cat: "scarf",    catLabel: "اشارپ",      price: 365000, color: "#8C3B3B" },
+];
+
+const CATEGORIES = [
+  { key: "all",       label: "همه" },
+  { key: "table",     label: "رومیزی" },
+  { key: "cupholder", label: "جالیوانی" },
+  { key: "coaster",   label: "زیرلیوانی" },
+  { key: "headband",  label: "تل مو" },
+  { key: "sofa",      label: "رومبلی" },
+  { key: "scarf",     label: "اشارپ" },
+];
+
+const CART_KEY = "bafika_cart_v1";
+const REVIEWS_KEY = "bafika_reviews_v1";
+
+/* نظرات پیش‌فرض که همه بازدیدکننده‌ها می‌بینن (چون سایت بک‌اند نداره) */
+const SEED_REVIEWS = [
+  { name: "نگار", rating: 5, text: "رومیزی که گرفتم عالی بود، دقیقاً مثل عکس‌های پیج. کیفیت بافتش فوق‌العادس.", date: "1404/04/10" },
+  { name: "مریم", rating: 5, text: "ست جالیوانی رو برای هدیه گرفتم، همه عاشقش شدن 🌸", date: "1404/03/22" },
+  { name: "سارا", rating: 4, text: "کیفیت خوب بود، فقط ارسال یه‌کم طول کشید ولی ارزششو داشت.", date: "1404/02/15" },
+];
+
+/* ---------- ۲) توابع کمکی ---------- */
+function formatPrice(n) {
+  return n.toLocaleString("fa-IR") + " تومان";
+}
+
+function readCart() {
+  try {
+    const raw = localStorage.getItem(CART_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function writeCart(cart) {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  updateCartCount();
+}
+
+function cartItemCount(cart) {
+  return Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+}
+
+function addToCart(productId, qty = 1) {
+  const cart = readCart();
+  cart[productId] = (cart[productId] || 0) + qty;
+  writeCart(cart);
+}
+
+function setQty(productId, qty) {
+  const cart = readCart();
+  if (qty <= 0) {
+    delete cart[productId];
+  } else {
+    cart[productId] = qty;
+  }
+  writeCart(cart);
+}
+
+function removeFromCart(productId) {
+  const cart = readCart();
+  delete cart[productId];
+  writeCart(cart);
+}
+
+function updateCartCount() {
+  const cart = readCart();
+  const count = cartItemCount(cart);
+  document.querySelectorAll("[data-cart-count]").forEach((el) => {
+    el.textContent = count;
+    el.style.display = count > 0 ? "flex" : "none";
+  });
+}
+
+/* ---------- ۳) SVG آیکون یک کلاف نخ برای جایگزین تصویر محصول ---------- */
+function yarnSvg(color) {
+  return `<svg viewBox="0 0 100 100" width="72%" height="72%" aria-hidden="true">
+    <circle cx="50" cy="50" r="42" fill="none" stroke="${color}" stroke-width="6" opacity=".25"/>
+    <path d="M50 8 C 20 20, 20 80, 50 92 C 80 80, 80 20, 50 8" fill="none" stroke="${color}" stroke-width="5" opacity=".55"/>
+    <path d="M12 40 C 45 55, 55 55, 88 40" fill="none" stroke="${color}" stroke-width="5" opacity=".55"/>
+    <path d="M12 62 C 45 47, 55 47, 88 62" fill="none" stroke="${color}" stroke-width="5" opacity=".55"/>
+    <circle cx="50" cy="50" r="42" fill="none" stroke="${color}" stroke-width="6"/>
+  </svg>`;
+}
+
+/* ---------- ۴) نمایش/ساخت toast ---------- */
+function showToast(message) {
+  let toast = document.querySelector(".toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.className = "toast";
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+/* ---------- ۵) رندر گرید محصولات (برای صفحه اصلی و صفحه محصولات) ---------- */
+function renderProductGrid(container, list) {
+  if (!container) return;
+  if (list.length === 0) {
+    container.innerHTML = `<p style="grid-column:1/-1;text-align:center;">محصولی در این دسته پیدا نشد.</p>`;
+    return;
+  }
+  container.innerHTML = list.map((p) => `
+    <article class="product-card">
+      <div class="product-thumb" style="background:${p.color}14;">
+        ${yarnSvg(p.color)}
+      </div>
+      <div class="product-body">
+        <span class="product-cat">${p.catLabel}</span>
+        <h3 class="product-name">${p.name}</h3>
+        <span class="badge-natural">۱۰۰٪ نخ طبیعی</span>
+        <div class="product-foot">
+          <span class="product-price">${formatPrice(p.price)}</span>
+          <button class="add-btn" data-add="${p.id}">افزودن به سبد</button>
+        </div>
+      </div>
+    </article>
+  `).join("");
+
+  container.querySelectorAll("[data-add]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = Number(btn.dataset.add);
+      addToCart(id, 1);
+      btn.textContent = "افزوده شد ✓";
+      btn.classList.add("added");
+      showToast("به سبد خرید اضافه شد");
+      setTimeout(() => {
+        btn.textContent = "افزودن به سبد";
+        btn.classList.remove("added");
+      }, 1400);
+    });
+  });
+}
+
+/* ---------- ۶) منوی موبایل ---------- */
+function initMobileNav() {
+  const toggle = document.querySelector(".menu-toggle");
+  const links = document.querySelector(".nav-links");
+  if (!toggle || !links) return;
+  toggle.addEventListener("click", () => {
+    const isOpen = links.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+}
+
+/* ---------- ۷) صفحه محصولات: فیلتر دسته ---------- */
+function initProductsPage() {
+  const grid = document.querySelector("[data-product-grid]");
+  const toolbar = document.querySelector("[data-toolbar]");
+  if (!grid || !toolbar) return;
+
+  toolbar.innerHTML = CATEGORIES.map((c, i) => `
+    <button class="chip" data-cat="${c.key}" aria-pressed="${i === 0 ? "true" : "false"}">${c.label}</button>
+  `).join("");
+
+  renderProductGrid(grid, PRODUCTS);
+
+  toolbar.querySelectorAll(".chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      toolbar.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", "false"));
+      chip.setAttribute("aria-pressed", "true");
+      const cat = chip.dataset.cat;
+      const filtered = cat === "all" ? PRODUCTS : PRODUCTS.filter((p) => p.cat === cat);
+      renderProductGrid(grid, filtered);
+    });
+  });
+}
+
+/* ---------- ۸) صفحه اصلی: چند محصول منتخب ---------- */
+function initHomeFeatured() {
+  const grid = document.querySelector("[data-featured-grid]");
+  if (!grid) return;
+  renderProductGrid(grid, PRODUCTS.slice(0, 6));
+}
+
+/* ---------- ۹) صفحه سبد خرید ---------- */
+function initCartPage() {
+  const wrap = document.querySelector("[data-cart-wrap]");
+  if (!wrap) return;
+
+  function render() {
+    const cart = readCart();
+    const ids = Object.keys(cart);
+
+    if (ids.length === 0) {
+      wrap.innerHTML = `
+        <div class="empty-cart" style="grid-column:1/-1;">
+          <h2>سبد خرید شما خالیه</h2>
+          <p>هنوز محصولی به سبدتون اضافه نکردید.</p>
+          <a class="btn btn-primary" href="products.html">مشاهده محصولات</a>
+        </div>`;
+      return;
+    }
+
+    let subtotal = 0;
+    const itemsHtml = ids.map((id) => {
+      const p = PRODUCTS.find((x) => x.id === Number(id));
+      if (!p) return "";
+      const qty = cart[id];
+      subtotal += p.price * qty;
+      return `
+        <div class="cart-item" data-item="${p.id}">
+          <div class="thumb" style="background:${p.color}14;">${yarnSvg(p.color)}</div>
+          <div>
+            <div class="name">${p.name}</div>
+            <div class="cat">${p.catLabel} · ${formatPrice(p.price)}</div>
+          </div>
+          <div class="qty-control">
+            <button data-dec aria-label="کم کردن تعداد">−</button>
+            <span>${qty}</span>
+            <button data-inc aria-label="زیاد کردن تعداد">+</button>
+          </div>
+          <button class="remove-btn" data-remove>حذف</button>
+        </div>`;
+    }).join("");
+
+    const subtotalDisplay = subtotal;
+
+    wrap.innerHTML = `
+      <div>
+        <h2 style="margin-bottom:6px;">سبد خرید</h2>
+        <div class="stitch-line" style="margin-bottom:18px;"></div>
+        ${itemsHtml}
+      </div>
+      <aside class="summary-card">
+        <h3>خلاصه سفارش</h3>
+        <div class="summary-row total"><span>جمع کالاها</span><span>${formatPrice(subtotalDisplay)}</span></div>
+        <p class="form-note" style="margin:4px 0 0;">هزینه ارسال جدا محاسبه و توی دایرکت اینستاگرام اعلام می‌شه.</p>
+        <a href="checkout.html" class="btn btn-primary btn-block" style="margin-top:16px;">📷 ثبت سفارش در اینستاگرام</a>
+        <a href="products.html" class="btn btn-outline btn-block" style="margin-top:10px;">ادامه خرید</a>
+      </aside>
+    `;
+
+    wrap.querySelectorAll("[data-item]").forEach((row) => {
+      const id = Number(row.dataset.item);
+      row.querySelector("[data-inc]").addEventListener("click", () => {
+        const c = readCart();
+        setQty(id, (c[id] || 0) + 1);
+        render();
+      });
+      row.querySelector("[data-dec]").addEventListener("click", () => {
+        const c = readCart();
+        setQty(id, (c[id] || 0) - 1);
+        render();
+      });
+      row.querySelector("[data-remove]").addEventListener("click", () => {
+        removeFromCart(id);
+        render();
+      });
+    });
+  }
+
+  render();
+}
+
+/* ---------- ۱۰) صفحه تسویه‌حساب: آماده‌سازی سفارش برای اینستاگرام ---------- */
+function initCheckoutPage() {
+  const miniSummary = document.querySelector("[data-mini-summary]");
+  const form = document.querySelector("[data-checkout-form]");
+  if (!miniSummary || !form) return;
+
+  const cart = readCart();
+  const ids = Object.keys(cart);
+
+  if (ids.length === 0) {
+    document.querySelector("[data-checkout-page]").innerHTML = `
+      <div class="empty-cart">
+        <h2>سبد خرید شما خالیه</h2>
+        <p>برای ثبت سفارش اول باید محصولی به سبد اضافه کنید.</p>
+        <a class="btn btn-primary" href="products.html">مشاهده محصولات</a>
+      </div>`;
+    return;
+  }
+
+  let subtotal = 0;
+  const orderLines = [];
+  miniSummary.innerHTML = ids.map((id) => {
+    const p = PRODUCTS.find((x) => x.id === Number(id));
+    const qty = cart[id];
+    subtotal += p.price * qty;
+    orderLines.push(`• ${p.name} × ${qty} — ${formatPrice(p.price * qty)}`);
+    return `<div class="summary-mini-item"><span>${p.name} × ${qty}</span><span>${formatPrice(p.price * qty)}</span></div>`;
+  }).join("");
+
+  document.querySelector("[data-total]").textContent = formatPrice(subtotal);
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let valid = true;
+    form.querySelectorAll("[required]").forEach((input) => {
+      const field = input.closest(".form-field");
+      if (!input.value.trim()) {
+        valid = false;
+        field && field.classList.add("invalid");
+      } else {
+        field && field.classList.remove("invalid");
+      }
+    });
+    if (!valid) {
+      showToast("لطفاً فیلدهای ضروری را تکمیل کنید");
+      return;
+    }
+
+    const name = form.querySelector("#f-name").value.trim();
+    const phone = form.querySelector("#f-phone").value.trim();
+    const address = form.querySelector("#f-address").value.trim();
+    const city = form.querySelector("#f-city").value.trim();
+    const postal = form.querySelector("#f-postal").value.trim();
+
+    const orderText =
+      `سفارش جدید از سایت bafika\n\n` +
+      orderLines.join("\n") +
+      `\n\nجمع تقریبی: ${formatPrice(subtotal)}\n(هزینه ارسال جداگانه محاسبه می‌شه)\n\n` +
+      `نام: ${name}\nموبایل: ${phone}\nشهر: ${city}\nآدرس: ${address}` +
+      (postal ? `\nکد پستی: ${postal}` : "");
+
+    const resultBox = document.querySelector("[data-order-result]");
+    const textarea = document.querySelector("[data-order-text]");
+    textarea.value = orderText;
+    resultBox.style.display = "block";
+    resultBox.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    localStorage.removeItem(CART_KEY);
+    updateCartCount();
+    form.querySelectorAll("button[type=submit]").forEach(b => b.disabled = true);
+
+    // تلاش برای کپی خودکار
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(orderText)
+        .then(() => showToast("متن سفارش کپی شد ✓"))
+        .catch(() => showToast("متن سفارش رو آماده کردیم، دکمه کپی رو بزن"));
+    } else {
+      showToast("متن سفارش رو آماده کردیم، دکمه کپی رو بزن");
+    }
+  });
+
+  const copyBtn = document.querySelector("[data-copy-order]");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", () => {
+      const textarea = document.querySelector("[data-order-text]");
+      textarea.select();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textarea.value).then(() => showToast("کپی شد ✓"));
+      } else {
+        document.execCommand("copy");
+        showToast("کپی شد ✓");
+      }
+    });
+  }
+}
+
+/* ---------- ۱۱) صفحه نظرات ---------- */
+function readReviews() {
+  try {
+    const raw = localStorage.getItem(REVIEWS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function starsHtml(rating) {
+  let out = "";
+  for (let i = 1; i <= 5; i++) out += i <= rating ? "★" : "☆";
+  return out;
+}
+
+function initReviewsPage() {
+  const list = document.querySelector("[data-reviews-list]");
+  const form = document.querySelector("[data-review-form]");
+  if (!list || !form) return;
+
+  function render() {
+    const all = [...SEED_REVIEWS, ...readReviews()];
+    list.innerHTML = all.slice().reverse().map((r) => `
+      <div class="review-card">
+        <div class="review-head">
+          <strong>${r.name}</strong>
+          <span class="review-stars">${starsHtml(r.rating)}</span>
+        </div>
+        <p style="margin:6px 0 4px;">${r.text}</p>
+        <span class="review-date">${r.date}</span>
+      </div>
+    `).join("");
+  }
+
+  let selectedRating = 5;
+  const starButtons = form.querySelectorAll("[data-star]");
+  function paintStars() {
+    starButtons.forEach((b) => {
+      b.textContent = Number(b.dataset.star) <= selectedRating ? "★" : "☆";
+    });
+  }
+  starButtons.forEach((b) => {
+    b.addEventListener("click", () => {
+      selectedRating = Number(b.dataset.star);
+      paintStars();
+    });
+  });
+  paintStars();
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const nameInput = form.querySelector("#r-name");
+    const textInput = form.querySelector("#r-text");
+    let valid = true;
+
+    [nameInput, textInput].forEach((input) => {
+      const field = input.closest(".form-field");
+      if (!input.value.trim()) {
+        valid = false;
+        field.classList.add("invalid");
+      } else {
+        field.classList.remove("invalid");
+      }
+    });
+
+    if (!valid) {
+      showToast("لطفاً نام و متن نظر رو بنویس");
+      return;
+    }
+
+    const reviews = readReviews();
+    reviews.push({
+      name: nameInput.value.trim(),
+      rating: selectedRating,
+      text: textInput.value.trim(),
+      date: new Date().toLocaleDateString("fa-IR"),
+    });
+    localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews));
+
+    form.reset();
+    selectedRating = 5;
+    paintStars();
+    render();
+    showToast("ممنون از نظرت! ✓");
+  });
+
+  render();
+}
+
+/* ---------- ۱۲) فرم تماس با ما ---------- */
+function initContactForm() {
+  const form = document.querySelector("[data-contact-form]");
+  if (!form) return;
+  const success = document.querySelector("[data-contact-success]");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let valid = true;
+
+    const name = form.querySelector("#c-name");
+    const email = form.querySelector("#c-email");
+    const message = form.querySelector("#c-message");
+
+    [name, message].forEach((input) => {
+      const field = input.closest(".form-field");
+      if (!input.value.trim()) {
+        valid = false;
+        field.classList.add("invalid");
+      } else {
+        field.classList.remove("invalid");
+      }
+    });
+
+    const emailField = email.closest(".form-field");
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email.value.trim())) {
+      valid = false;
+      emailField.classList.add("invalid");
+    } else {
+      emailField.classList.remove("invalid");
+    }
+
+    if (!valid) {
+      showToast("لطفاً اطلاعات فرم را بررسی کنید");
+      return;
+    }
+
+    form.reset();
+    form.style.display = "none";
+    success.classList.add("show");
+  });
+}
+
+/* ---------- ۱۳) اجرای اولیه در همه صفحات ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  updateCartCount();
+  initMobileNav();
+  initHomeFeatured();
+  initProductsPage();
+  initCartPage();
+  initCheckoutPage();
+  initReviewsPage();
+  initContactForm();
+
+  // سال جاری در فوتر
+  document.querySelectorAll("[data-year]").forEach((el) => {
+    el.textContent = new Date().getFullYear();
+  });
+});

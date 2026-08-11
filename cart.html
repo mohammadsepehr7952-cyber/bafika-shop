@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبد خرید | bafika</title>
+<link rel="icon" type="image/jpeg" href="img/logo.jpg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="index.html" class="brand"><img src="img/logo.jpg" alt="bafika" class="brand-logo"> bafika</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">خانه</a>
+      <a href="products.html">محصولات</a>
+      <a href="about.html">درباره ما</a>
+      <a href="contact.html">تماس با ما</a>
+      <a href="reviews.html">نظرات</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="cart.html" class="cart-link" aria-current="page">
+        🧶 سبد خرید <span class="cart-count" data-cart-count style="display:none;">0</span>
+      </a>
+      <button class="menu-toggle" aria-label="باز کردن منو" aria-expanded="false" aria-controls="navLinks">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container cart-wrap" data-cart-wrap></div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">© <span data-year></span> bafika. تمام حقوق محفوظ است.</div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
