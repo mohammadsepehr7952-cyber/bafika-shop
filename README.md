@@ -13,22 +13,22 @@ kamva/
 ├── css/style.css
 ├── js/main.js        همه منطق: محصولات، سبد خرید، فرم‌ها، نظرات
 └── img/
-    ├── logo.jpg       لوگوی برند
+    ├── logo.png       لوگوی برند
     └── products/      عکس‌های محصولات (اضافه کن هرچی خواستی)
 ```
 
 ## اضافه کردن عکس واقعی محصولات
-1. عکس‌ها رو بریز داخل پوشه‌ی `img/products/` (اسم فایل انگلیسی و بدون فاصله بهتره، مثلاً `runner1-1.jpg`)
+1. عکس‌ها رو بریز داخل پوشه‌ی `img/products/` — ترجیحاً با فرمت **PNG** (اسم فایل انگلیسی و بدون فاصله بهتره، مثلاً `runner1-1.png`)
 2. توی `js/main.js`، محصول موردنظر رو توی آرایه‌ی `PRODUCTS` پیدا کن و جلوی `images:` مسیر عکس(ها) رو بنویس:
 
 ```js
-{ id: 1, name: "رومیزی بافت دایره‌ای گلدار", ..., images: ["img/products/runner1-1.jpg"] }
+{ id: 1, name: "رومیزی بافت دایره‌ای گلدار", ..., images: ["img/products/runner1-1.png"] }
 ```
 
 اگه محصول چند مدل/عکس داره (مثلاً از چند زاویه یا چند رنگ)، همه رو تو همون آرایه بذار:
 
 ```js
-images: ["img/products/runner1-1.jpg", "img/products/runner1-2.jpg", "img/products/runner1-3.jpg"]
+images: ["img/products/runner1-1.png", "img/products/runner1-2.png", "img/products/runner1-3.png"]
 ```
 
 وقتی بیشتر از یک عکس بذاری، **خودکار روی کارت محصول اسلایدر (فلش + نقطه) نشون داده می‌شه** — نیازی به کار اضافه نیست.
