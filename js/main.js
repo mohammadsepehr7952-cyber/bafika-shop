@@ -11,8 +11,8 @@
    - اگه آرایه رو خالی [] بذاری، همون آیکون کلاف نخ به‌عنوان جایگزین نمایش داده می‌شه
 ------------------------------------------------- */
 const PRODUCTS = [
-  { id: 1, name: "رومیزی بافت دایره‌ای گلدار",   cat: "table",    catLabel: "رومیزی",     price: 320000, color: "#8C3B3B", images: [] },
-  { id: 2, name: "رومیزی بافت مستطیلی کرمی",     cat: "table",    catLabel: "رومیزی",     price: 380000, color: "#C99A3E", images: [] },
+  { id: 1, name: "رانر طرح رنگین کمان",   cat: "table",    catLabel: "رومیزی",     price: 1500000, color: "#8C3B3B", images: ["img/runner/runner1.png", "img/runner/runner2.png", "img/runner/runner3.png","img/runner/runner4.png"] },
+  { id: 2, name: "رومیزی طرح ابریشمی",     cat: "table",    catLabel: "رومیزی",     price: 300000, color: "#C99A3E", images: ["img/abrisham/ab1.png", "img/abrisham/ab2.png", "img/abrisham/ab3.png"] },
   { id: 3, name: "رانر رومیزی بافت طرح گل",       cat: "table",    catLabel: "رومیزی",     price: 260000, color: "#5B6E4D", images: [] },
   { id: 4, name: "ست جالیوانی بافت ۶ عددی",       cat: "cupholder", catLabel: "جالیوانی",   price: 210000, color: "#6E2C2C", images: [] },
   { id: 5, name: "جالیوانی بافت طرح تک‌گل",        cat: "cupholder", catLabel: "جالیوانی",   price: 65000,  color: "#8C3B3B", images: [] },
