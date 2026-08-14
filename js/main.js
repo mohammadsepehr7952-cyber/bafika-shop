@@ -9,11 +9,18 @@
    images: ["img/products/table1-1.png", "img/products/table1-2.png"]
    - اگه بیشتر از یک عکس بذاری، خودکار روی کارت محصول اسلایدر (فلش/نقطه) نشون داده می‌شه
    - اگه آرایه رو خالی [] بذاری، همون آیکون کلاف نخ به‌عنوان جایگزین نمایش داده می‌شه
+
+   برای تخفیف روی یک محصول:
+   یک فیلد oldPrice (قیمت قبل از تخفیف) اضافه کن. مثال:
+   { id: 1, name: "...", price: 1200000, oldPrice: 1500000, ... }
+   - price همیشه قیمتِ نهایی و واقعی (تخفیف‌خورده) هست؛ همینه که تو checkout و سبد خرید حساب می‌شه
+   - oldPrice فقط برای نمایش خط‌خورده و محاسبه‌ی درصد تخفیفه
+   - محصولی که تخفیف نداره، اصلاً فیلد oldPrice رو ننویس (یا حذفش کن)
 ------------------------------------------------- */
 const PRODUCTS = [
-  { id: 1, name: "رانر طرح رنگین کمان",   cat: "table",    catLabel: "رومیزی",     price: 1500000, color: "#8C3B3B", images: ["img/runner/runner1.png", "img/runner/runner2.png", "img/runner/runner3.png","img/runner/runner4.png"] },
-  { id: 2, name: "رومیزی طرح ابریشمی",     cat: "table",    catLabel: "رومیزی",     price: 300000, color: "#C99A3E", images: ["img/abrisham/ab1.png", "img/abrisham/ab2.png", "img/abrisham/ab3.png"] },
-  { id: 3, name: "رانر رومیزی بافت طرح گل",       cat: "table",    catLabel: "رومیزی",     price: 260000, color: "#5B6E4D", images: [] },
+  { id: 1, name: "رانر طرح رنگین کمان",   cat: "table",    catLabel: "رومیزی",     price: 1445000, oldPrice: 1700000, color: "#8C3B3B", images: ["img/runner/runner1.png", "img/runner/runner2.png", "img/runner/runner3.png","img/runner/runner4.png"] },
+  { id: 2, name: "رومیزی طرح ابریشمی",     cat: "table",    catLabel: "رومیزی",     price: 300000, oldPrice: 365000, color: "#C99A3E", images: ["img/abrisham/ab1.png", "img/abrisham/ab2.png", "img/abrisham/ab3.png"] },
+  { id: 3, name: "هدپیس (تل دست بافت)",       cat: "table",    catLabel: "تل مو",     price: 200000, color: "#5B6E4D", images: ["img/hedpis/hp1.png","img/hedpis/hp2.png","img/hedpis/hp3.png"] },
   { id: 4, name: "ست جالیوانی بافت ۶ عددی",       cat: "cupholder", catLabel: "جالیوانی",   price: 210000, color: "#6E2C2C", images: [] },
   { id: 5, name: "جالیوانی بافت طرح تک‌گل",        cat: "cupholder", catLabel: "جالیوانی",   price: 65000,  color: "#8C3B3B", images: [] },
   { id: 6, name: "ست زیرلیوانی بافت ۴ عددی",      cat: "coaster",  catLabel: "زیرلیوانی",  price: 145000, color: "#5C4F3F", images: [] },
@@ -49,6 +56,26 @@ const SEED_REVIEWS = [
 /* ---------- ۲) توابع کمکی ---------- */
 function formatPrice(n) {
   return n.toLocaleString("fa-IR") + " تومان";
+}
+
+function discountPercent(p) {
+  if (!p.oldPrice || p.oldPrice <= p.price) return 0;
+  return Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+}
+
+function priceBlockHtml(p) {
+  const pct = discountPercent(p);
+  if (pct <= 0) {
+    return `<span class="product-price">${formatPrice(p.price)}</span>`;
+  }
+  return `
+    <div class="price-block">
+      <div class="price-row">
+        <span class="product-price discounted">${formatPrice(p.price)}</span>
+        <span class="discount-tag">٪${pct} تخفیف</span>
+      </div>
+      <span class="old-price">${formatPrice(p.oldPrice)}</span>
+    </div>`;
 }
 
 function readCart() {
@@ -197,13 +224,16 @@ function renderProductGrid(container, list) {
   }
   container.innerHTML = list.map((p) => `
     <article class="product-card">
-      ${productThumbHtml(p)}
+      <div class="thumb-wrap">
+        ${productThumbHtml(p)}
+        ${discountPercent(p) > 0 ? `<span class="thumb-discount-badge">٪${discountPercent(p)}-</span>` : ""}
+      </div>
       <div class="product-body">
         <span class="product-cat">${p.catLabel}</span>
         <h3 class="product-name">${p.name}</h3>
         <span class="badge-natural">۱۰۰٪ نخ طبیعی</span>
         <div class="product-foot">
-          <span class="product-price">${formatPrice(p.price)}</span>
+          ${priceBlockHtml(p)}
           <button class="add-btn" data-add="${p.id}">افزودن به سبد</button>
         </div>
       </div>
