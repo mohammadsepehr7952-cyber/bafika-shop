@@ -46,6 +46,43 @@ const CATEGORIES = [
 const CART_KEY = "bafika_cart_v1";
 const REVIEWS_KEY = "bafika_reviews_v1";
 
+/* ---------- پوستر‌های تبلیغاتی بالای صفحه اصلی ----------
+   هر پوستر یعنی یه اسلاید؛ می‌تونی عکس بذاری یا فقط رنگ/گرادیان + متن.
+   - image: مسیر عکس (اختیاری). اگه ندی، از bgColor استفاده می‌شه.
+   - bgColor: یک رنگ یا گرادیان CSS برای پس‌زمینه (وقتی عکس نیست)
+   - eyebrow/title/subtitle: متن‌های روی پوستر
+   - ctaText/ctaLink: دکمه‌ی روی پوستر
+------------------------------------------------- */
+const BANNERS = [
+  {
+    image: "",
+    bgColor: "linear-gradient(120deg, #8C3B3B 0%, #6E2C2C 100%)",
+    eyebrow: "تخفیف ویژه",
+    title: "تا ۲۰٪ تخفیف روی رومیزی‌های بافت",
+    subtitle: "فقط تا پایان این هفته",
+    ctaText: "مشاهده محصولات",
+    ctaLink: "products.html",
+  },
+  {
+    image: "",
+    bgColor: "linear-gradient(120deg, #5B6E4D 0%, #3f4d36 100%)",
+    eyebrow: "محصول جدید",
+    title: "هدپیس‌های بافت دست، تازه رسید",
+    subtitle: "طرح‌های جدید پاییزی",
+    ctaText: "ببین چی داریم",
+    ctaLink: "products.html#headband",
+  },
+  {
+    image: "",
+    bgColor: "linear-gradient(120deg, #C99A3E 0%, #a87c28 100%)",
+    eyebrow: "bafika",
+    title: "دستباف، با عشق برای خونه‌ی تو",
+    subtitle: "هر قطعه، دست‌ساز و یکتا",
+    ctaText: "داستان ما",
+    ctaLink: "about.html",
+  },
+];
+
 /* نظرات پیش‌فرض که همه بازدیدکننده‌ها می‌بینن (چون سایت بک‌اند نداره) */
 const SEED_REVIEWS = [
   { name: "نگار", rating: 5, text: "رومیزی که گرفتم عالی بود، دقیقاً مثل عکس‌های پیج. کیفیت بافتش فوق‌العادس.", date: "1404/04/10" },
@@ -171,7 +208,7 @@ function productThumbHtml(p) {
   }
 
   const slidesHtml = p.images.map((src, i) => `
-    <img src="${src}" alt="${p.name}" loading="lazy" class="slide ${i === 0 ? "active" : ""}" data-slide-index="${i}">
+    <img src="${src}" alt="${p.name}" loading="lazy" draggable="false" class="slide ${i === 0 ? "active" : ""}" data-slide-index="${i}">
   `).join("");
   const dotsHtml = p.images.map((_, i) => `
     <button class="car-dot ${i === 0 ? "active" : ""}" data-dot-index="${i}" aria-label="عکس ${i + 1}"></button>
@@ -184,6 +221,146 @@ function productThumbHtml(p) {
       <button type="button" class="car-arrow next" data-car-next aria-label="عکس بعدی">›</button>
       <div class="car-dots">${dotsHtml}</div>
     </div>`;
+}
+
+/* ---------- کمکی: پشتیبانی از کشیدن با انگشت/موس روی اسلایدرها ---------- */
+function addSwipeSupport(el, onPrev, onNext) {
+  let startX = 0;
+  let startY = 0;
+  let down = false;
+  let dragged = false;
+  const threshold = 40;
+
+  function onDown(x, y) {
+    down = true;
+    dragged = false;
+    startX = x;
+    startY = y;
+  }
+  function onMove(x, y, e) {
+    if (!down) return;
+    const dx = x - startX;
+    const dy = y - startY;
+    if (!dragged && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
+      dragged = true;
+    }
+    if (dragged && e && e.cancelable) e.preventDefault();
+  }
+  function onUp(x, y) {
+    if (!down) return;
+    down = false;
+    const dx = x - startX;
+    const dy = y - startY;
+    if (Math.abs(dx) >= threshold && Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 0) onPrev();
+      else onNext();
+    }
+  }
+
+  el.style.touchAction = "pan-y";
+  el.style.webkitUserSelect = "none";
+  el.style.userSelect = "none";
+
+  el.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    onDown(e.clientX, e.clientY);
+  });
+  el.addEventListener("pointermove", (e) => onMove(e.clientX, e.clientY, e), { passive: false });
+  el.addEventListener("pointerup", (e) => onUp(e.clientX, e.clientY));
+  el.addEventListener("pointercancel", () => { down = false; });
+  el.addEventListener("pointerleave", () => { down = false; });
+
+  // جلوگیری از باز شدن لینک/کلیک ناخواسته درست بعد از یه کشیدن (drag)
+  el.addEventListener("click", (e) => {
+    if (dragged) {
+      e.preventDefault();
+      e.stopPropagation();
+      dragged = false;
+    }
+  }, true);
+}
+
+/* ---------- پوستر تبلیغاتی بالای صفحه اصلی ---------- */
+function initPromoSlider() {
+  const wrap = document.querySelector("[data-promo-slider]");
+  if (!wrap || BANNERS.length === 0) return;
+
+  const slidesHtml = BANNERS.map((b, i) => `
+    <a class="promo-slide ${i === 0 ? "active" : ""}" data-promo-index="${i}"
+       href="${b.ctaLink || "#"}"
+       style="${b.image ? `background-image:url('${b.image}')` : `background-image:${b.bgColor}`}">
+      <div class="promo-overlay">
+        ${b.eyebrow ? `<span class="promo-eyebrow">${b.eyebrow}</span>` : ""}
+        <h2 class="promo-title">${b.title || ""}</h2>
+        ${b.subtitle ? `<p class="promo-subtitle">${b.subtitle}</p>` : ""}
+        ${b.ctaText ? `<span class="btn btn-gold promo-cta">${b.ctaText}</span>` : ""}
+      </div>
+    </a>
+  `).join("");
+
+  const dotsHtml = BANNERS.map((_, i) => `
+    <button class="car-dot ${i === 0 ? "active" : ""}" data-promo-dot="${i}" aria-label="پوستر ${i + 1}"></button>
+  `).join("");
+
+  wrap.innerHTML = `
+    ${slidesHtml}
+    ${BANNERS.length > 1 ? `
+      <button type="button" class="car-arrow prev promo-arrow" data-promo-prev aria-label="پوستر قبلی">‹</button>
+      <button type="button" class="car-arrow next promo-arrow" data-promo-next aria-label="پوستر بعدی">›</button>
+      <div class="car-dots promo-dots">${dotsHtml}</div>
+    ` : ""}
+  `;
+
+  if (BANNERS.length <= 1) return;
+
+  const slides = wrap.querySelectorAll(".promo-slide");
+  const dots = wrap.querySelectorAll("[data-promo-dot]");
+  let index = 0;
+  let timer = null;
+
+  function goTo(i) {
+    index = (i + BANNERS.length) % BANNERS.length;
+    slides.forEach((s) => s.classList.toggle("active", Number(s.dataset.promoIndex) === index));
+    dots.forEach((d) => d.classList.toggle("active", Number(d.dataset.promoDot) === index));
+  }
+
+  function next() { goTo(index + 1); }
+  function prev() { goTo(index - 1); }
+
+  wrap.querySelector("[data-promo-prev]").addEventListener("click", (e) => {
+    e.preventDefault();
+    prev();
+    resetAutoplay();
+  });
+  wrap.querySelector("[data-promo-next]").addEventListener("click", (e) => {
+    e.preventDefault();
+    next();
+    resetAutoplay();
+  });
+  dots.forEach((d) => {
+    d.addEventListener("click", (e) => {
+      e.preventDefault();
+      goTo(Number(d.dataset.promoDot));
+      resetAutoplay();
+    });
+  });
+
+  // جلوگیری از رفتن به لینک وقتی کاربر داشته کشیدن (drag) رو انجام می‌داده
+  // (خود addSwipeSupport این کار رو مدیریت می‌کنه)
+
+  addSwipeSupport(
+    wrap,
+    () => { prev(); resetAutoplay(); },
+    () => { next(); resetAutoplay(); }
+  );
+
+  function resetAutoplay() {
+    clearInterval(timer);
+    timer = setInterval(next, 5000);
+  }
+  resetAutoplay();
+  wrap.addEventListener("mouseenter", () => clearInterval(timer));
+  wrap.addEventListener("mouseleave", resetAutoplay);
 }
 
 function initCarousels(container) {
@@ -213,6 +390,12 @@ function initCarousels(container) {
         goTo(Number(d.dataset.dotIndex));
       });
     });
+
+    addSwipeSupport(
+      car,
+      () => goTo(Number(car.dataset.index) - 1),
+      () => goTo(Number(car.dataset.index) + 1)
+    );
   });
 }
 
@@ -612,6 +795,7 @@ function initContactForm() {
 document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
   initMobileNav();
+  initPromoSlider();
   initHomeFeatured();
   initProductsPage();
   initCartPage();
