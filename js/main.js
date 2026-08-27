@@ -55,7 +55,7 @@ const REVIEWS_KEY = "bafika_reviews_v1";
 ------------------------------------------------- */
 const BANNERS = [
   {
-    image: "",
+    image: "img/banners/runner-banner.jpg",
     bgColor: "linear-gradient(120deg, #8C3B3B 0%, #6E2C2C 100%)",
     eyebrow: "تخفیف ویژه",
     title: "تا ۲۰٪ تخفیف روی رومیزی‌های بافت",
@@ -64,7 +64,7 @@ const BANNERS = [
     ctaLink: "products.html",
   },
   {
-    image: "",
+    image: "img/banners/hedpis-banner.jpg",
     bgColor: "linear-gradient(120deg, #5B6E4D 0%, #3f4d36 100%)",
     eyebrow: "محصول جدید",
     title: "هدپیس‌های بافت دست، تازه رسید",
@@ -73,13 +73,22 @@ const BANNERS = [
     ctaLink: "products.html#headband",
   },
   {
-    image: "",
+    image: "img/banners/story-banner.jpg",
     bgColor: "linear-gradient(120deg, #C99A3E 0%, #a87c28 100%)",
     eyebrow: "bafika",
     title: "دستباف، با عشق برای خونه‌ی تو",
     subtitle: "هر قطعه، دست‌ساز و یکتا",
     ctaText: "داستان ما",
     ctaLink: "about.html",
+  },
+  {
+    image: "img/banners/abrisham-banner.jpg",
+    bgColor: "linear-gradient(120deg, #B08968 0%, #7f5539 100%)",
+    eyebrow: "تخفیف ویژه",
+    title: "رومیزی طرح ابریشمی، حالا با تخفیف",
+    subtitle: "ظرافت دست‌بافت با درخشش ابریشم",
+    ctaText: "مشاهده محصول",
+    ctaLink: "products.html#table",
   },
 ];
 
