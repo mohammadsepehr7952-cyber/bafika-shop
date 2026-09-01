@@ -800,10 +800,23 @@ function initContactForm() {
   });
 }
 
+/* ---------- ۶.۵) هدر شناور روی هیرو: بعد از اسکرول به حالت تمام‌رنگ برگردد ---------- */
+function initOverlayHeader() {
+  const header = document.querySelector(".site-header.header-overlay");
+  if (!header) return;
+  const onScroll = () => {
+    if (window.scrollY > 60) header.classList.add("scrolled");
+    else header.classList.remove("scrolled");
+  };
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+}
+
 /* ---------- ۱۳) اجرای اولیه در همه صفحات ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
   initMobileNav();
+  initOverlayHeader();
   initPromoSlider();
   initHomeFeatured();
   initProductsPage();
