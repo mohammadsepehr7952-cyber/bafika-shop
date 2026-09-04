@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>bafika | اتصال اینترنت قطع شده</title>
+<style>
+  :root{
+    --cream:#FFFFF0;
+    --surface:#FFFEFA;
+    --ink:#2A2118;
+    --ink-soft:#6B5B47;
+    --wine:#008080;
+    --line:#E8DFC0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Vazirmatn','Tahoma',sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:24px;
+    text-align:center;
+  }
+  .wrap{max-width:420px;}
+  .brand{
+    font-weight:800;font-size:1.1rem;color:var(--wine);
+    letter-spacing:.02em;margin-bottom:36px;
+  }
+
+  /* ---------- کاموای بی‌جون با نخ آویزون ---------- */
+  .yarn-scene{width:150px;height:170px;margin:0 auto 18px;position:relative;}
+  .yarn-ball{animation:sway 3.6s ease-in-out infinite;transform-origin:70px 62px;}
+  @keyframes sway{
+    0%,100%{transform:rotate(-2.5deg);}
+    50%{transform:rotate(2.5deg);}
+  }
+  .thread{
+    animation:swing 3.6s ease-in-out infinite;transform-origin:78px 96px;
+  }
+  @keyframes swing{
+    0%,100%{transform:rotate(4deg);}
+    50%{transform:rotate(-4deg);}
+  }
+
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.78rem;font-weight:700;color:var(--ink-soft);
+    letter-spacing:.15em;margin-bottom:10px;
+  }
+  .eyebrow::before,.eyebrow::after{content:'';width:22px;height:1px;background:var(--line);}
+  h1{
+    font-size:1.5rem;font-weight:800;margin-bottom:10px;line-height:1.5;
+  }
+  p{
+    color:var(--ink-soft);font-size:.95rem;line-height:1.9;margin-bottom:28px;
+  }
+  .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 26px;border-radius:999px;font-weight:700;font-size:.9rem;
+    border:none;cursor:pointer;font-family:inherit;
+    transition:transform .15s, background .15s;
+  }
+  .btn-primary{background:var(--wine);color:#fff;}
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-outline{background:transparent;color:var(--ink);border:1px solid var(--line);}
+  .btn-outline:hover{background:var(--surface);}
+  .status{
+    margin-top:26px;font-size:.78rem;color:var(--ink-soft);
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:#c0392b;flex:none;}
+  .dot.online{background:#3a8a5c;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">bafika</div>
+
+    <div class="yarn-scene" aria-hidden="true">
+      <svg viewBox="0 0 150 170" width="150" height="170">
+        <g class="thread">
+          <path d="M78 96 Q 60 130 68 160" fill="none" stroke="#7A7A1F" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="68" cy="160" r="3.5" fill="#7A7A1F"/>
+        </g>
+        <g class="yarn-ball">
+          <circle cx="70" cy="62" r="46" fill="#FFFCF6" stroke="#E4D6BC" stroke-width="2"/>
+          <g fill="none" stroke="#8C3B3B" stroke-width="3" opacity=".7">
+            <path d="M70 18 C 40 30, 40 94, 70 106 C 100 94, 100 30, 70 18"/>
+            <path d="M24 62 C 40 40, 100 40, 116 62"/>
+            <path d="M24 62 C 40 84, 100 84, 116 62"/>
+          </g>
+          <circle cx="70" cy="62" r="46" fill="none" stroke="#C99A3E" stroke-width="3"/>
+        </g>
+      </svg>
+    </div>
+
+    <span class="eyebrow">بدون اتصال</span>
+    <h1>انگار نخ اتصال پاره شده</h1>
+    <p>اینترنتت وصل نیست یا موقتاً در دسترس نیست. یه نگاه به اتصالت بنداز و دوباره امتحان کن.</p>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="location.reload()">تلاش مجدد</button>
+      <a class="btn btn-outline" href="index.html">بازگشت به خانه</a>
+    </div>
+
+    <div class="status">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">در حال بررسی اتصال...</span>
+    </div>
+  </div>
+
+  <script>
+    function updateStatus(){
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      if(navigator.onLine){
+        dot.classList.add('online');
+        text.textContent = 'اتصال برقرار شد، می‌تونی صفحه رو دوباره بارگذاری کنی';
+      } else {
+        dot.classList.remove('online');
+        text.textContent = 'هنوز به اینترنت وصل نیستی';
+      }
+    }
+    updateStatus();
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+  </script>
+</body>
+</html>

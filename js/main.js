@@ -426,7 +426,15 @@ function renderProductGrid(container, list) {
         <span class="badge-natural">۱۰۰٪ نخ طبیعی</span>
         <div class="product-foot">
           ${priceBlockHtml(p)}
-          <button class="add-btn" data-add="${p.id}">افزودن به سبد</button>
+          <button class="add-btn" data-add="${p.id}">
+            <span class="pill">
+              <span class="addbtn-icowrap">
+                <svg class="box-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="16" height="11" rx="1.2"/><path d="M4 9l2-4h12l2 4"/><path d="M9 13h6"/></svg>
+                <svg class="cart-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/><path d="M2.5 3h2l2.6 12.3a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 7.5H6.1"/></svg>
+              </span>
+              <span class="pill-label">افزودن به سبد</span>
+            </span>
+          </button>
         </div>
       </div>
     </article>
@@ -435,18 +443,95 @@ function renderProductGrid(container, list) {
   initCarousels(container);
 
   container.querySelectorAll("[data-add]").forEach((btn) => {
+    const iconWrap = btn.querySelector(".addbtn-icowrap");
+    const label = btn.querySelector(".pill-label");
+
     btn.addEventListener("click", () => {
+      if (btn.dataset.animating) return;
+      btn.dataset.animating = "1";
       const id = Number(btn.dataset.add);
       addToCart(id, 1);
-      btn.textContent = "افزوده شد ✓";
-      btn.classList.add("added");
       showToast("به سبد خرید اضافه شد");
+
+      // اندازه‌گیری موقعیت فعلی آیکون (نقطه‌ی استراحت) قبل از اینکه به absolute تبدیلش کنیم
+      const btnRect = btn.getBoundingClientRect();
+      const wrapRect = iconWrap.getBoundingClientRect();
+      const restLeft = wrapRect.left - btnRect.left;
+      const iconW = wrapRect.width;
+      const centerLeft = (btnRect.width - iconW) / 2;
+      const exitLeft = -iconW - 4; // بیرون از لبه‌ی چپ دکمه، محو می‌شه
+
+      iconWrap.style.position = "absolute";
+      iconWrap.style.top = "50%";
+      iconWrap.style.transform = "translateY(-50%)";
+      iconWrap.style.left = restLeft + "px";
+      iconWrap.style.transition = "none";
+      void iconWrap.offsetWidth; // reflow، تا انیمیشن از همین نقطه شروع بشه
+
+      label.classList.add("fade");
+      iconWrap.style.transition = "left .34s cubic-bezier(.5,0,.2,1)";
+
+      requestAnimationFrame(() => {
+        // مرحله ۱: سبد از نقطه‌ی استراحتش تا وسط دکمه حرکت می‌کنه
+        iconWrap.style.left = centerLeft + "px";
+      });
+
       setTimeout(() => {
-        btn.textContent = "افزودن به سبد";
-        btn.classList.remove("added");
-      }, 1400);
+        // مرحله ۲: یه بسته از بالا میفته تو سبد
+        btn.classList.add("drop");
+
+        setTimeout(() => {
+          btn.classList.remove("drop");
+          btn.classList.add("landed");
+
+          setTimeout(() => {
+            btn.classList.remove("landed");
+
+            // مرحله ۳: سبد (با بسته توش) از وسط به چپ می‌ره و محو می‌شه
+            iconWrap.style.transition = "left .34s cubic-bezier(.5,0,.2,1), opacity .3s .06s";
+            iconWrap.style.left = exitLeft + "px";
+            iconWrap.style.opacity = "0";
+
+            setTimeout(() => {
+              // مرحله ۴: نامرئی برمی‌گرده به نقطه‌ی استراحت، بعد همراه با متن دوباره ظاهر می‌شه
+              iconWrap.style.transition = "none";
+              iconWrap.style.left = restLeft + "px";
+              void iconWrap.offsetWidth;
+              iconWrap.style.transition = "opacity .3s";
+              iconWrap.style.opacity = "1";
+
+              btn.classList.add("added");
+              label.textContent = "افزوده شد ✓";
+              label.classList.remove("fade");
+              bumpCartIcon();
+
+              setTimeout(() => {
+                label.textContent = "افزودن به سبد";
+                btn.classList.remove("added");
+                // برگردوندن آیکون به حالت عادی (داخل جریان فلکس، نه absolute)
+                iconWrap.style.position = "";
+                iconWrap.style.top = "";
+                iconWrap.style.left = "";
+                iconWrap.style.transform = "";
+                iconWrap.style.transition = "";
+                iconWrap.style.opacity = "";
+                delete btn.dataset.animating;
+              }, 900);
+            }, 350);
+          }, 170);
+        }, 260);
+      }, 340);
     });
   });
+}
+
+function bumpCartIcon() {
+  const cartLink = document.querySelector(".cart-link");
+  if (!cartLink) return;
+  cartLink.classList.remove("bump");
+  void cartLink.offsetWidth;
+  cartLink.classList.add("bump");
+  setTimeout(() => cartLink.classList.remove("bump"), 450);
 }
 
 /* ---------- ۶) منوی موبایل ---------- */
@@ -830,3 +915,14 @@ document.addEventListener("DOMContentLoaded", () => {
     el.textContent = new Date().getFullYear();
   });
 });
+
+/* ---------- ۱۴) ثبت سرویس‌ورکر برای نمایش صفحه‌ی آفلاین اختصاصی ---------- */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    // مسیر نسبی، تا هم رو گیت‌هاب‌پیجز (زیرپوشه) و هم لوکال درست کار کنه
+    const swUrl = new URL("sw.js", document.baseURI).href;
+    navigator.serviceWorker.register(swUrl).catch(() => {
+      // اگه ثبت نشد (مثلاً روی http ساده به‌جای https/localhost)، بی‌سروصدا رد می‌شیم
+    });
+  });
+}
