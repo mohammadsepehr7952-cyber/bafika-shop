@@ -152,15 +152,29 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .site-header.header-overlay.scrolled .nav-links a::after{background-image:radial-gradient(circle at 3px 3px, transparent 2px, var(--wine) 2.3px 2.8px, transparent 3.2px);}
 
 /* mobile dropdown must always stay readable, regardless of header state */
-.site-header.header-overlay .nav-links.open{background:var(--surface);}
+.site-header.header-overlay .nav-links.open{
+  background:rgba(255,254,250,.5);
+  backdrop-filter:blur(24px) saturate(180%);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+}
 .site-header.header-overlay .nav-links.open a{color:var(--ink);}
 .site-header.header-overlay .nav-links.open a::after{background-image:radial-gradient(circle at 3px 3px, transparent 2px, var(--wine) 2.3px 2.8px, transparent 3.2px);}
 
+/* once scrolled, the header itself goes solid — the dropdown should match, not stay see-through over ordinary page content */
+.site-header.header-overlay.scrolled .nav-links.open{
+  background:rgba(255,254,250,.9);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+}
+
 @media (max-width:820px){
   .nav-links{
-    position:fixed;inset:64px 0 auto 0;background:var(--surface);
+    position:fixed;inset:64px 0 auto 0;
+    background:rgba(255,254,250,.9);
+    backdrop-filter:blur(20px) saturate(160%);
+    -webkit-backdrop-filter:blur(20px) saturate(160%);
     flex-direction:column;padding:20px 24px;gap:18px;
-    border-bottom:1px solid var(--line);box-shadow:var(--shadow);
+    border-bottom:1px solid rgba(232,223,192,.6);box-shadow:var(--shadow);
     transform:translateY(-12px);opacity:0;pointer-events:none;transition:.2s;
   }
   .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto;}
