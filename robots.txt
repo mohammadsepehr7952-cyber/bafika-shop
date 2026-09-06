@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /cart.html
+Disallow: /checkout.html
+Disallow: /offline.html
+
+Sitemap: https://bafika77.ir/sitemap.xml
