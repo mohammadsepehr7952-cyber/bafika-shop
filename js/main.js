@@ -18,11 +18,11 @@
    - محصولی که تخفیف نداره، اصلاً فیلد oldPrice رو ننویس (یا حذفش کن)
 ------------------------------------------------- */
 const PRODUCTS = [
-  { id: 1, name: "رانر طرح رنگین کمان",   cat: "table",    catLabel: "رومیزی",     price: 1445000, oldPrice: 1700000, color: "#8C3B3B", images: ["img/runner/runner1.png", "img/runner/runner2.png", "img/runner/runner3.png","img/runner/runner4.png"] },
-  { id: 2, name: "رومیزی طرح ابریشمی",     cat: "table",    catLabel: "رومیزی",     price: 300000, oldPrice: 365000, color: "#C99A3E", images: ["img/abrisham/ab1.png", "img/abrisham/ab2.png", "img/abrisham/ab3.png"] },
-  { id: 3, name: "هدپیس (تل دست بافت)",       cat: "table",    catLabel: "تل مو",     price: 200000, color: "#5B6E4D", images: ["img/hedpis/hp1.png","img/hedpis/hp2.png","img/hedpis/hp3.png"] },
-  { id: 4, name: "ست جالیوانی بافت ۶ عددی",       cat: "cupholder", catLabel: "جالیوانی",   price: 210000, color: "#6E2C2C", images: [] },
-  { id: 5, name: "جالیوانی بافت طرح تک‌گل",        cat: "cupholder", catLabel: "جالیوانی",   price: 65000,  color: "#8C3B3B", images: [] },
+  { id: 1, name: "رانر طرح رنگین کمان",   cat: "table",    catLabel: "رومیزی",     price: 2000000, oldPrice: 2270000, color: "#8C3B3B", images: ["img/runner/runner1.png", "img/runner/runner2.png", "img/runner/runner3.png","img/runner/runner4.png"] },
+  { id: 2, name: "رومیزی طرح ابریشمی",     cat: "table",    catLabel: "رومیزی",     price: 500000, oldPrice: 565000, color: "#C99A3E", images: ["img/abrisham/ab1.png", "img/abrisham/ab2.png", "img/abrisham/ab3.png"] },
+  { id: 3, name: "هدپیس (تل دست بافت)",       cat: "table",    catLabel: "تل مو",     price: 300000, color: "#5B6E4D", images: ["img/hedpis/hp1.png","img/hedpis/hp2.png","img/hedpis/hp3.png"] },
+  { id: 4, name: "رومیزی طرح موکا",       cat: "table",    catLabel: "رومیزی",     price: 3000000, oldPrice: 3300000, color: "#6E2C2C", images: ["img/romizi/ro1.png","img/romizi/ro2.png","img/romizi/ro3.png","img/romizi/ro4.png"] },
+ /* { id: 5, name: "جالیوانی بافت طرح تک‌گل",        cat: "cupholder", catLabel: "جالیوانی",   price: 65000,  color: "#8C3B3B", images: [] },
   { id: 6, name: "ست زیرلیوانی بافت ۴ عددی",      cat: "coaster",  catLabel: "زیرلیوانی",  price: 145000, color: "#5C4F3F", images: [] },
   { id: 7, name: "زیرلیوانی بافت رنگارنگ",         cat: "coaster",  catLabel: "زیرلیوانی",  price: 40000,  color: "#C99A3E", images: [] },
   { id: 8, name: "تل مو بافت پهن زمستانی",         cat: "headband", catLabel: "تل مو",      price: 165000, color: "#8C3B3B", images: [] },
@@ -30,7 +30,7 @@ const PRODUCTS = [
   { id: 10, name: "رومبلی بافت ست سه‌تکه",         cat: "sofa",     catLabel: "رومبلی",     price: 690000, color: "#6E2C2C", images: [] },
   { id: 11, name: "رومبلی بافت طرح لوزی",          cat: "sofa",     catLabel: "رومبلی",     price: 590000, color: "#8C3B3B", images: [] },
   { id: 12, name: "اشارپ بافت سبک پاییزی",         cat: "scarf",    catLabel: "اشارپ",      price: 340000, color: "#C99A3E", images: [] },
-  { id: 13, name: "اشارپ بافت دورنگ کرم-زرشکی",    cat: "scarf",    catLabel: "اشارپ",      price: 365000, color: "#8C3B3B", images: [] },
+  { id: 13, name: "اشارپ بافت دورنگ کرم-زرشکی",    cat: "scarf",    catLabel: "اشارپ",      price: 365000, color: "#8C3B3B", images: [] },*/
 ];
 
 const CATEGORIES = [
