@@ -2,7 +2,7 @@
 // این فقط از بار دومی که کاربر با اینترنت سایت رو باز کرده کار می‌کنه،
 // چون برای بار اول باید حتماً یک‌بار آنلاین فایل‌ها رو کش کنه.
 
-const CACHE_NAME = "bafika-cache-v1";
+const CACHE_NAME = "bafika-cache-v3";
 const OFFLINE_URL = "offline.html";
 
 const CORE_ASSETS = [
@@ -54,7 +54,23 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // برای بقیه‌ی فایل‌ها (css/js/img): اول کش، بعد شبکه، و اگه هیچ‌کدوم نبود بی‌خیال میشیم
+  // برای js و css: اول شبکه (تا تغییرات همیشه بیاد)، و فقط اگه اینترنت نبود از کش
+  if (/\.(js|css)(\?|$)/.test(req.url)) {
+    event.respondWith(
+      fetch(req, { cache: "no-cache" })
+        .then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(req, copy));
+          }
+          return res;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  // برای بقیه‌ی فایل‌ها (img): اول کش، بعد شبکه، و اگه هیچ‌کدوم نبود بی‌خیال میشیم
   event.respondWith(
     caches.match(req).then((cached) => cached || fetch(req).catch(() => undefined))
   );
