@@ -22,15 +22,16 @@ const PRODUCTS = [
   { id: 2, name: "رومیزی طرح ابریشمی",     cat: "table",    catLabel: "رومیزی",     price: 500000, oldPrice: 565000, color: "#C99A3E", images: ["img/abrisham/ab1.webp", "img/abrisham/ab2.webp", "img/abrisham/ab3.webp"] },
   { id: 3, name: "هدپیس (تل دست بافت)",       cat: "table",    catLabel: "تل مو",     price: 300000, color: "#5B6E4D", images: ["img/hedpis/hp1.webp","img/hedpis/hp2.webp","img/hedpis/hp3.webp"] },
   { id: 4, name: "رومیزی طرح موکا",       cat: "table",    catLabel: "رومیزی",     price: 3000000, oldPrice: 3300000, color: "#6E2C2C", images: ["img/romizi/ro1.webp","img/romizi/ro2.webp","img/romizi/ro3.webp","img/romizi/ro4.webp"] },
-  { id: 5, name: " زیر بشقابی و زیر لیوانی طرح گلبرگ",        cat: "table", catLabel: "زیر بشقابی",   price: 1500000, color: "#8C3B3B", images: ["img/zir boshghabi/zir1.webp","img/zir boshghabi/zir2.webp","img/zir boshghabi/zir3.webp"] },
- /* { id: 6, name: "ست زیرلیوانی بافت ۴ عددی",      cat: "coaster",  catLabel: "زیرلیوانی",  price: 145000, color: "#5C4F3F", images: [] },
-  { id: 7, name: "زیرلیوانی بافت رنگارنگ",         cat: "coaster",  catLabel: "زیرلیوانی",  price: 40000,  color: "#C99A3E", images: [] },
-  { id: 8, name: "تل مو بافت پهن زمستانی",         cat: "headband", catLabel: "تل مو",      price: 165000, color: "#8C3B3B", images: [] },
+  { id: 5, name: "رو میزی و رومبلی طرح گلریز",         cat: "table",  catLabel: "رومیزی",  price: 8800000,  oldPrice: 10000000 , color: "#C99A3E", images: ["img/romobli/rom1.webp" ,"img/romobli/rom2.webp"] } ,
+  { id: 6, name: " زیر بشقابی و زیر لیوانی طرح گلبرگ",        cat: "table", catLabel: "زیر بشقابی",   price: 1500000, color: "#8C3B3B", images: ["img/zir boshghabi/zir1.webp","img/zir boshghabi/zir2.webp","img/zir boshghabi/zir3.webp"] },
+  { id: 7, name: "اشارپ طرح ارغوان",      cat: "table",  catLabel: "اشارپ",  price: 1500000, color: "#5C4F3F", images: ["img/esharp 1/esh1.webp" , "img/esharp 1/esh2.webp" , "img/esharp 1/esh3.webp"] },
+  ,
+ /* { id: 8, name: "تل مو بافت پهن زمستانی",         cat: "headband", catLabel: "تل مو",      price: 165000, color: "#8C3B3B", images: [] },
   { id: 9, name: "تل مو بافت گره‌دار",              cat: "headband", catLabel: "تل مو",      price: 150000, color: "#5B6E4D", images: [] },
   { id: 10, name: "رومبلی بافت ست سه‌تکه",         cat: "sofa",     catLabel: "رومبلی",     price: 690000, color: "#6E2C2C", images: [] },
   { id: 11, name: "رومبلی بافت طرح لوزی",          cat: "sofa",     catLabel: "رومبلی",     price: 590000, color: "#8C3B3B", images: [] },
-  { id: 12, name: "اشارپ بافت سبک پاییزی",         cat: "scarf",    catLabel: "اشارپ",      price: 340000, color: "#C99A3E", images: [] },
-  { id: 13, name: "اشارپ بافت دورنگ کرم-زرشکی",    cat: "scarf",    catLabel: "اشارپ",      price: 365000, color: "#8C3B3B", images: [] },*/
+  { id: 12, name: "اشارپ بافت سبک پاییزی",         cat: "scarf",    catLabel："اشارپ",      price：340000, color："#C99A3E", images：[] },
+  { id：13, name："اشارپ بافت دورنگ کرم-زرشکی",    cat："scarf",    catLabel："اشارپ",      price：365000, color："#8C3B3B", images：[] },*/
 ];
 
 const CATEGORIES = [
