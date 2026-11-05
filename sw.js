@@ -44,6 +44,10 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
+  // درخواست‌های غیر GET (مثل POST چت‌بات) و درخواست به دامنه‌های دیگر (مثل سرور چت‌بات روی Render)
+  // رو دست نمی‌زنیم و مستقیم به شبکه می‌رن
+  if (req.method !== "GET" || new URL(req.url).origin !== self.location.origin) return;
+
   // فقط درخواست‌های ناوبری صفحه (باز کردن یک آدرس/صفحه) رو مدیریت می‌کنیم
   if (req.mode === "navigate") {
     event.respondWith(
