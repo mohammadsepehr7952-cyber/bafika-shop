@@ -79,6 +79,7 @@
   #bf-overlay.bf-show{opacity:1;visibility:visible;pointer-events:auto}
   html.bf-lock,html.bf-lock body{overflow:hidden}
   html.bf-lock{scrollbar-gutter:stable}
+  #bf-chat.bf-kb #bf-toggle{visibility:hidden}
 
   #bf-toggle{position:relative;z-index:3;width:58px;height:58px;border-radius:50%;background:var(--bf-ink);color:var(--bf-gold);border:2px solid var(--bf-gold);cursor:pointer;
     display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 6px 18px rgba(0,0,0,.28);transition:transform .2s ease,background .2s}
@@ -182,6 +183,25 @@
   function lockPage() { document.documentElement.classList.add("bf-lock"); }
   function unlockPage() { document.documentElement.classList.remove("bf-lock"); }
 
+  // موبایل: وقتی کیبورد باز می‌شود، کادر چت دقیقاً در بخش دیدنی صفحه (بالای کیبورد) جا می‌گیرد
+  function resetFit() {
+    els.root.classList.remove("bf-kb");
+    els.win.style.top = els.win.style.bottom = els.win.style.height = "";
+  }
+  function fitToKeyboard() {
+    var vv = window.visualViewport;
+    if (!vv || els.win.classList.contains("bf-closed")) return;
+    var mobile = window.matchMedia && matchMedia("(max-width: 480px)").matches;
+    var kb = !!mobile && (window.innerHeight - vv.height > 120);
+    var was = els.root.classList.contains("bf-kb");
+    if (!kb) { if (was) { resetFit(); els.messages.scrollTop = els.messages.scrollHeight; } return; }
+    els.root.classList.add("bf-kb");
+    els.win.style.top = (vv.offsetTop + 8) + "px";
+    els.win.style.bottom = "auto";
+    els.win.style.height = Math.max(240, vv.height - 16) + "px";
+    if (!was) els.messages.scrollTop = els.messages.scrollHeight;
+  }
+
   function openChat() {
     els.win.classList.remove("bf-closed");
     els.overlay.classList.add("bf-show");
@@ -195,6 +215,7 @@
     els.win.classList.add("bf-closed");
     els.overlay.classList.remove("bf-show");
     unlockPage();
+    resetFit();
     els.toggle.setAttribute("aria-expanded", "false");
   }
 
@@ -277,6 +298,7 @@
     root.innerHTML = HTML;
     document.body.appendChild(root);
 
+    els.root = root;
     els.overlay = root.querySelector("#bf-overlay");
     els.toggle = root.querySelector("#bf-toggle");
     els.dot = root.querySelector("#bf-dot");
@@ -304,6 +326,10 @@
     ["click", "wheel", "touchmove"].forEach(function (ev) {
       els.overlay.addEventListener(ev, closeChat, { passive: true });
     });
+    if (window.visualViewport) {
+      visualViewport.addEventListener("resize", fitToKeyboard);
+      visualViewport.addEventListener("scroll", fitToKeyboard);
+    }
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && !els.win.classList.contains("bf-closed")) closeChat();
     });
