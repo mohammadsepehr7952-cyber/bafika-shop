@@ -74,14 +74,20 @@
   #bf-chat *{box-sizing:border-box}
   #bf-chat button,#bf-chat input{font-family:inherit}
 
-  #bf-toggle{position:relative;width:58px;height:58px;border-radius:50%;background:var(--bf-ink);color:var(--bf-gold);border:2px solid var(--bf-gold);cursor:pointer;
+  #bf-overlay{position:fixed;top:0;right:0;bottom:0;left:0;z-index:1;background:rgba(42,33,24,.38);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+    opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s ease,visibility .28s}
+  #bf-overlay.bf-show{opacity:1;visibility:visible;pointer-events:auto}
+  html.bf-lock,html.bf-lock body{overflow:hidden}
+  html.bf-lock{scrollbar-gutter:stable}
+
+  #bf-toggle{position:relative;z-index:3;width:58px;height:58px;border-radius:50%;background:var(--bf-ink);color:var(--bf-gold);border:2px solid var(--bf-gold);cursor:pointer;
     display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 6px 18px rgba(0,0,0,.28);transition:transform .2s ease,background .2s}
   #bf-toggle:hover{transform:scale(1.07);background:var(--bf-teal-dark)}
   #bf-toggle:focus-visible,#bf-close:focus-visible,#bf-send:focus-visible,#bf-pills button:focus-visible{outline:3px solid var(--bf-gold);outline-offset:2px}
   #bf-dot{position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;background:var(--bf-teal);border:2px solid var(--bf-ink)}
   #bf-dot.bf-hidden{display:none}
 
-  #bf-window{position:absolute;bottom:72px;width:372px;max-width:calc(100vw - 32px);height:min(540px,calc(100vh - 110px));
+  #bf-window{position:absolute;z-index:3;bottom:72px;width:372px;max-width:calc(100vw - 32px);height:min(540px,calc(100vh - 110px));
     background:var(--bf-cream);border-radius:20px;box-shadow:0 14px 40px rgba(0,0,0,.25);display:flex;flex-direction:column;overflow:hidden;
     transition:opacity .22s ease,transform .22s ease}
   #bf-chat[data-side="left"] #bf-window{left:0;transform-origin:bottom left}
@@ -96,7 +102,7 @@
   #bf-close{flex:none;width:30px;height:30px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:var(--bf-cream);font-size:20px;line-height:1;cursor:pointer;padding:0}
   #bf-close:hover{background:rgba(255,255,255,.26)}
 
-  #bf-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+  #bf-messages{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
   .bf-msg{max-width:86%;padding:9px 14px;border-radius:16px;font-size:14px;line-height:1.8;word-wrap:break-word;overflow-wrap:anywhere}
   .bf-msg.bot{align-self:flex-start;background:#fff;color:var(--bf-ink);border:1px solid var(--bf-line);border-top-right-radius:4px}
   .bf-msg.user{align-self:flex-end;background:var(--bf-teal);color:#fff;border-top-left-radius:4px}
@@ -105,7 +111,7 @@
   .bf-msg.typing i{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:#9a8d77;animation:bfBlink 1.1s infinite ease-in-out}
   .bf-msg.typing i:nth-child(2){animation-delay:.18s}.bf-msg.typing i:nth-child(3){animation-delay:.36s}
   @keyframes bfBlink{0%,80%,100%{opacity:.25}40%{opacity:1}}
-  @media (prefers-reduced-motion:reduce){.bf-msg.typing i{animation:none}#bf-window,#bf-toggle{transition:none}#bf-messages{scroll-behavior:auto}}
+  @media (prefers-reduced-motion:reduce){.bf-msg.typing i{animation:none}#bf-window,#bf-toggle,#bf-overlay{transition:none}#bf-messages{scroll-behavior:auto}}
 
   #bf-pills{display:flex;flex-wrap:wrap;gap:6px;padding:4px 14px 10px}
   #bf-pills.bf-hidden{display:none}
@@ -125,6 +131,7 @@
   }`;
 
   var HTML = `
+  <div id="bf-overlay" aria-hidden="true"></div>
   <button id="bf-toggle" type="button" aria-label="چت با دستیار بافیکا" aria-expanded="false" aria-controls="bf-window">
     <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     <span id="bf-dot"></span>
@@ -172,8 +179,13 @@
     try { fetch(CONFIG.API_BASE + "/", { mode: "no-cors", cache: "no-store" }).catch(function () {}); } catch (e) {}
   }
 
+  function lockPage() { document.documentElement.classList.add("bf-lock"); }
+  function unlockPage() { document.documentElement.classList.remove("bf-lock"); }
+
   function openChat() {
     els.win.classList.remove("bf-closed");
+    els.overlay.classList.add("bf-show");
+    lockPage();
     els.toggle.setAttribute("aria-expanded", "true");
     els.dot.classList.add("bf-hidden");
     warmUp();
@@ -181,6 +193,8 @@
   }
   function closeChat() {
     els.win.classList.add("bf-closed");
+    els.overlay.classList.remove("bf-show");
+    unlockPage();
     els.toggle.setAttribute("aria-expanded", "false");
   }
 
@@ -263,6 +277,7 @@
     root.innerHTML = HTML;
     document.body.appendChild(root);
 
+    els.overlay = root.querySelector("#bf-overlay");
     els.toggle = root.querySelector("#bf-toggle");
     els.dot = root.querySelector("#bf-dot");
     els.win = root.querySelector("#bf-window");
@@ -285,6 +300,10 @@
       if (els.win.classList.contains("bf-closed")) openChat(); else closeChat();
     });
     els.close.addEventListener("click", function () { closeChat(); els.toggle.focus(); });
+    // ضربه، اسکرول (ماوس) یا کشیدن (لمس) روی فضای مات بیرون از چت، آن را می‌بندد
+    ["click", "wheel", "touchmove"].forEach(function (ev) {
+      els.overlay.addEventListener(ev, closeChat, { passive: true });
+    });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && !els.win.classList.contains("bf-closed")) closeChat();
     });
