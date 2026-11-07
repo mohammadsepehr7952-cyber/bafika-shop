@@ -535,15 +535,142 @@ function bumpCartIcon() {
   setTimeout(() => cartLink.classList.remove("bump"), 450);
 }
 
-/* ---------- ۶) منوی موبایل ---------- */
+/* ---------- ۶) منوی موبایل: کارت کنار صفحه با پس‌زمینه‌ی تار ---------- */
 function initMobileNav() {
   const toggle = document.querySelector(".menu-toggle");
   const links = document.querySelector(".nav-links");
   if (!toggle || !links) return;
-  toggle.addEventListener("click", () => {
-    const isOpen = links.classList.toggle("open");
-    toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+
+  // اطلاعات تماس پایین منو (اگر شماره یا آیدی عوض شد، فقط همین چند خط را عوض کن)
+  const PHONE_LABEL = "۰۹۳۷۱۴۳۹۷۵۰";
+  const PHONE_HREF = "tel:09371439750";
+  const INSTA_LABEL = "@bafika_2026";
+  const INSTA_HREF = "https://instagram.com/bafika_2026";
+  const SVG = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  const ICON_PHONE = SVG + '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>';
+  const ICON_INSTA = SVG + '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6"/></svg>';
+
+  const mq = window.matchMedia("(max-width: 820px)");
+  const logo = document.querySelector(".brand-logo");
+
+  /* --- ساخت کارت و لایه‌ی تار (به body اضافه می‌شوند تا هدر روی‌شان اثر نگذارد) --- */
+  const overlay = document.createElement("div");
+  overlay.className = "mnav-overlay";
+  overlay.setAttribute("aria-hidden", "true");
+
+  const card = document.createElement("div");
+  card.className = "mnav-card";
+  card.id = "mnavCard";
+  card.setAttribute("role", "dialog");
+  card.setAttribute("aria-label", "منوی سایت");
+
+  const head = document.createElement("div");
+  head.className = "mnav-head";
+  const brand = document.createElement("div");
+  brand.className = "brand";
+  const img = document.createElement("img");
+  img.className = "brand-logo";
+  img.alt = "";
+  img.src = logo ? logo.getAttribute("src") : "img/logo.png";
+  brand.appendChild(img);
+  brand.appendChild(document.createTextNode(" bafika"));
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.className = "mnav-close";
+  closeBtn.setAttribute("aria-label", "بستن منو");
+  closeBtn.textContent = "×";
+  head.appendChild(brand);
+  head.appendChild(closeBtn);
+  card.appendChild(head);
+
+  const sep1 = document.createElement("div");
+  sep1.className = "mnav-sep";
+  card.appendChild(sep1);
+
+  let idx = 0;
+  links.querySelectorAll("a").forEach((a) => {
+    const item = document.createElement("a");
+    item.className = "mnav-item mnav-link";
+    item.href = a.getAttribute("href");
+    item.textContent = a.textContent.trim();
+    const cur = a.getAttribute("aria-current");
+    if (cur) item.setAttribute("aria-current", cur);
+    item.style.setProperty("--i", idx++);
+    card.appendChild(item);
   });
+
+  const sep2 = document.createElement("div");
+  sep2.className = "mnav-sep mnav-sep-2";
+  card.appendChild(sep2);
+
+  const phone = document.createElement("a");
+  phone.className = "mnav-item mnav-contact";
+  phone.href = PHONE_HREF;
+  phone.innerHTML = '<span class="mnav-ic">' + ICON_PHONE + '</span><span class="mnav-ct"><small>تماس</small><b>' + PHONE_LABEL + "</b></span>";
+  phone.style.setProperty("--i", idx++);
+  card.appendChild(phone);
+
+  const insta = document.createElement("a");
+  insta.className = "mnav-item mnav-contact";
+  insta.href = INSTA_HREF;
+  insta.target = "_blank";
+  insta.rel = "noopener";
+  insta.innerHTML = '<span class="mnav-ic">' + ICON_INSTA + '</span><span class="mnav-ct"><small>اینستاگرام</small><b dir="ltr" style="text-align:right">' + INSTA_LABEL + "</b></span>";
+  insta.style.setProperty("--i", idx++);
+  card.appendChild(insta);
+
+  document.body.appendChild(overlay);
+  document.body.appendChild(card);
+  toggle.setAttribute("aria-controls", "mnavCard");
+
+  /* --- باز و بسته کردن --- */
+  let isOpen = false;
+  let startY = 0;
+
+  function onScroll() {
+    // با اسکرول صفحه منو بسته می‌شود (لرزش خیلی کوچک را نادیده می‌گیریم)
+    if (Math.abs(window.pageYOffset - startY) > 4) closeMenu();
+  }
+
+  function openMenu() {
+    if (isOpen || !mq.matches) return;
+    isOpen = true;
+    startY = window.pageYOffset;
+    overlay.classList.add("show");
+    card.classList.add("show");
+    toggle.setAttribute("aria-expanded", "true");
+    window.addEventListener("scroll", onScroll, { passive: true });
+    closeBtn.focus({ preventScroll: true });
+  }
+
+  function closeMenu() {
+    if (!isOpen) return;
+    isOpen = false;
+    overlay.classList.remove("show");
+    card.classList.remove("show");
+    toggle.setAttribute("aria-expanded", "false");
+    window.removeEventListener("scroll", onScroll);
+    if (card.contains(document.activeElement)) toggle.focus({ preventScroll: true });
+  }
+
+  toggle.addEventListener("click", () => (isOpen ? closeMenu() : openMenu()));
+  closeBtn.addEventListener("click", closeMenu);
+  // ضربه، اسکرول (ماوس) یا کشیدن (لمس) روی فضای تار بیرون کارت، منو را می‌بندد
+  ["click", "wheel", "touchmove"].forEach((ev) => {
+    overlay.addEventListener(ev, closeMenu, { passive: true });
+  });
+  // انتخاب یکی از لینک‌ها هم منو را می‌بندد
+  card.addEventListener("click", (e) => {
+    if (e.target.closest("a")) closeMenu();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu();
+  });
+  // چرخاندن گوشی یا بزرگ شدن پنجره تا حالت دسکتاپ، یا برگشتن به صفحه با دکمه‌ی Back
+  const onModeChange = () => { if (!mq.matches) closeMenu(); };
+  if (mq.addEventListener) mq.addEventListener("change", onModeChange);
+  else if (mq.addListener) mq.addListener(onModeChange);
+  window.addEventListener("pageshow", closeMenu);
 }
 
 /* ---------- ۷) صفحه محصولات: فیلتر دسته ---------- */
