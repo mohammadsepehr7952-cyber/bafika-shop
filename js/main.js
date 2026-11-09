@@ -10,6 +10,10 @@
    - اگه بیشتر از یک عکس بذاری، خودکار روی کارت محصول اسلایدر (فلش/نقطه) نشون داده می‌شه
    - اگه آرایه رو خالی [] بذاری، همون آیکون کلاف نخ به‌عنوان جایگزین نمایش داده می‌شه
 
+   برای نمایش محصول در بخش «محصولات منتخب» صفحه اصلی:
+   فیلد featured: true رو بهش اضافه کن (پیشنهاد: حداکثر ۶ تا، که ردیف‌ها کامل بمونن).
+   محصولی که featured نداره فقط تو صفحه «محصولات» دیده می‌شه.
+
    برای تخفیف روی یک محصول:
    یک فیلد oldPrice (قیمت قبل از تخفیف) اضافه کن. مثال:
    { id: 1, name: "...", price: 1200000, oldPrice: 1500000, ... }
@@ -18,14 +22,14 @@
    - محصولی که تخفیف نداره، اصلاً فیلد oldPrice رو ننویس (یا حذفش کن)
 ------------------------------------------------- */
 const PRODUCTS = [
-  { id: 1, name: "رانر طرح رنگین کمان",   cat: "runner",   catLabel: "رانر",         price: 2000000, oldPrice: 2270000, color: "#8C3B3B", images: ["img/runner/runner1.webp", "img/runner/runner2.webp", "img/runner/runner3.webp","img/runner/runner4.webp"] },
+  { id: 1, name: "رانر طرح رنگین کمان",   cat: "runner",   catLabel: "رانر",         featured: true, price: 2000000, oldPrice: 2270000, color: "#8C3B3B", images: ["img/runner/runner1.webp", "img/runner/runner2.webp", "img/runner/runner3.webp","img/runner/runner4.webp"] },
   { id: 2, name: "رومیزی طرح ابریشمی",     cat: "table",    catLabel: "رومیزی",     price: 500000, oldPrice: 565000, color: "#C99A3E", images: ["img/abrisham/ab1.webp", "img/abrisham/ab2.webp", "img/abrisham/ab3.webp"] },
-  { id: 3, name: "هدپیس (تل دست بافت)",       cat: "headband",    catLabel: "تل مو",     price: 300000, color: "#5B6E4D", images: ["img/hedpis/hp1.webp","img/hedpis/hp2.webp","img/hedpis/hp3.webp"] },
-  { id: 4, name: "رومیزی طرح موکا",       cat: "table",    catLabel: "رومیزی",     price: 3000000, oldPrice: 3300000, color: "#6E2C2C", images: ["img/romizi/ro1.webp","img/romizi/ro2.webp","img/romizi/ro3.webp","img/romizi/ro4.webp"] },
+  { id: 3, name: "هدپیس (تل دست بافت)",       cat: "headband",    catLabel: "تل مو",     featured: true, price: 300000, color: "#5B6E4D", images: ["img/hedpis/hp1.webp","img/hedpis/hp2.webp","img/hedpis/hp3.webp"] },
+  { id: 4, name: "رومیزی طرح موکا",       cat: "table",    catLabel: "رومیزی",     featured: true, price: 3000000, oldPrice: 3300000, color: "#6E2C2C", images: ["img/romizi/ro1.webp","img/romizi/ro2.webp","img/romizi/ro3.webp","img/romizi/ro4.webp"] },
   { id: 5, name: "رو میزی و رومبلی طرح گلریز",         cat: "table",  catLabel: "رومیزی",  price: 8800000,  oldPrice: 10000000 , color: "#C99A3E", images: ["img/romobli/rom1.webp" ,"img/romobli/rom2.webp"] } ,
-  { id: 6, name: " زیر بشقابی و زیر لیوانی طرح گلبرگ",        cat: "coaster", catLabel: "زیرلیوانی و زیربشقابی",   price: 1500000, color: "#8C3B3B", images: ["img/zir boshghabi/zir1.webp","img/zir boshghabi/zir2.webp","img/zir boshghabi/zir3.webp"] },
-  { id: 7, name: "اشارپ طرح ارغوان",      cat: "scarf",  catLabel: "اشارپ",  price: 1500000, color: "#5C4F3F", images: ["img/esharp 1/esh1.webp" , "img/esharp 1/esh2.webp" , "img/esharp 1/esh3.webp"] },
-  { id: 8, name: "کلاه سنتی طرح زمرد",   cat: "hat", catLabel: "کلاه", price: 650000, color: "#5B6E4D", images: ["img/kolah/kolah1.webp", "img/kolah/kolah2.webp", "img/kolah/kolah3.webp"] },
+  { id: 6, name: " زیر بشقابی و زیر لیوانی طرح گلبرگ",        cat: "coaster", catLabel: "زیرلیوانی و زیربشقابی",   featured: true, price: 1500000, color: "#8C3B3B", images: ["img/zir boshghabi/zir1.webp","img/zir boshghabi/zir2.webp","img/zir boshghabi/zir3.webp"] },
+  { id: 7, name: "اشارپ طرح ارغوان",      cat: "scarf",  catLabel: "اشارپ",  featured: true, price: 1500000, color: "#5C4F3F", images: ["img/esharp 1/esh1.webp" , "img/esharp 1/esh2.webp" , "img/esharp 1/esh3.webp"] },
+  { id: 8, name: "کلاه سنتی طرح زمرد",   cat: "hat", catLabel: "کلاه", featured: true, price: 650000, color: "#5B6E4D", images: ["img/kolah/kolah1.webp", "img/kolah/kolah2.webp", "img/kolah/kolah3.webp"] },
  /* { id: 8, name: "تل مو بافت پهن زمستانی",         cat: "headband", catLabel: "تل مو",      price: 165000, color: "#8C3B3B", images: [] },
   { id: 9, name: "تل مو بافت گره‌دار",              cat: "headband", catLabel: "تل مو",      price: 150000, color: "#5B6E4D", images: [] },
   { id: 10, name: "رومبلی بافت ست سه‌تکه",         cat: "sofa",     catLabel: "رومبلی",     price: 690000, color: "#6E2C2C", images: [] },
@@ -717,7 +721,7 @@ function initCatCounts() {
 function initHomeFeatured() {
   const grid = document.querySelector("[data-featured-grid]");
   if (!grid) return;
-  renderProductGrid(grid, PRODUCTS.slice(0, 6));
+  renderProductGrid(grid, PRODUCTS.filter((p) => p && p.featured));
 }
 
 /* ---------- ۹) صفحه سبد خرید ---------- */
