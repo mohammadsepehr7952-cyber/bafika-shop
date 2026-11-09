@@ -2,7 +2,7 @@
 // این فقط از بار دومی که کاربر با اینترنت سایت رو باز کرده کار می‌کنه،
 // چون برای بار اول باید حتماً یک‌بار آنلاین فایل‌ها رو کش کنه.
 
-const CACHE_NAME = "bafika-cache-v3";
+const CACHE_NAME = "bafika-cache-v4";
 const OFFLINE_URL = "offline.html";
 
 const CORE_ASSETS = [
@@ -14,7 +14,7 @@ const CORE_ASSETS = [
   "checkout.html",
   "reviews.html",
   "offline.html",
-  "css/style.css?v=16",
+  "css/style.css?v=17",
   "js/main.js",
   "img/logo.png",
 ];

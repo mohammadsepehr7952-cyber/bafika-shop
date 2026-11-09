@@ -705,6 +705,14 @@ function initProductsPage() {
   });
 }
 
+/* ---------- تعداد محصول روی کارت‌های دسته‌بندی صفحه اصلی ---------- */
+function initCatCounts() {
+  document.querySelectorAll("[data-cat-count]").forEach((el) => {
+    const n = PRODUCTS.filter((p) => p && p.cat === el.dataset.catCount).length;
+    el.textContent = n ? n.toLocaleString("fa-IR") + " محصول" : "";
+  });
+}
+
 /* ---------- ۸) صفحه اصلی: چند محصول منتخب ---------- */
 function initHomeFeatured() {
   const grid = document.querySelector("[data-featured-grid]");
@@ -1041,6 +1049,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initOverlayHeader();
   initPromoSlider();
   initHomeFeatured();
+  initCatCounts();
   initProductsPage();
   initCartPage();
   initCheckoutPage();

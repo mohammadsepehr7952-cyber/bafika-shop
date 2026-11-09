@@ -319,39 +319,32 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .cat-card{
   position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/5;
   display:flex;align-items:flex-end;padding:0;border:none;
-  text-decoration:none;
+  text-decoration:none;background:#e9dfcf;
   box-shadow:0 10px 24px -14px rgba(43,36,25,.45);
   transition:transform .22s ease, box-shadow .22s ease;
 }
 .cat-card:hover{transform:translateY(-5px);box-shadow:0 16px 30px -14px rgba(43,36,25,.55);}
-.cat-card::before{
-  /* بافت نقطه‌ای ظریف روی گرادیان، برای حس طراحی‌شده‌تر */
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(rgba(255,255,255,.14) 1.4px, transparent 1.4px);
-  background-size:16px 16px;
-  opacity:.5;
+.cat-img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:transform .5s ease;
 }
+.cat-card:hover .cat-img{transform:scale(1.06);}
 .cat-card::after{
+  /* گرادیان تیره‌ی پایین کارت، فقط برای خوانا ماندن اسم دسته روی عکس */
   content:'';position:absolute;inset:0;
-  background:linear-gradient(0deg, rgba(0,0,0,.55) 0%, transparent 55%);
-}
-.cat-icon{
-  position:absolute;top:12px;left:12px;width:46%;height:46%;
-  opacity:.28;
+  background:linear-gradient(0deg, rgba(30,18,12,.72) 0%, rgba(30,18,12,0) 52%);
 }
 .cat-label{
   position:relative;z-index:2;width:100%;padding:16px 18px;
   display:flex;flex-direction:column;gap:2px;
 }
-.cat-eyebrow{
-  color:rgba(255,255,255,.75);font-size:.68rem;font-weight:700;
-  letter-spacing:.02em;
-}
 .cat-title{
   color:#fff;font-family:'Lalezar',cursive;font-size:1.35rem;line-height:1.2;
 }
+.cat-count{color:rgba(255,255,255,.85);font-size:.78rem;font-weight:500;}
+.cat-count:empty{display:none;}
 @media (max-width:900px){.cat-grid{grid-template-columns:repeat(2,1fr);}}
-@media (max-width:560px){.cat-card{aspect-ratio:1/1;}.cat-title{font-size:1.15rem;}}
+@media (max-width:560px){.cat-title{font-size:1.15rem;}.cat-label{padding:12px 14px;}}
 
 /* ---------- product grid ---------- */
 .products-toolbar{
