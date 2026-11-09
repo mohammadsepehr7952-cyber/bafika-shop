@@ -18,14 +18,14 @@
    - محصولی که تخفیف نداره، اصلاً فیلد oldPrice رو ننویس (یا حذفش کن)
 ------------------------------------------------- */
 const PRODUCTS = [
-  { id: 1, name: "رانر طرح رنگین کمان",   cat: "table",    catLabel: "رومیزی",     price: 2000000, oldPrice: 2270000, color: "#8C3B3B", images: ["img/runner/runner1.webp", "img/runner/runner2.webp", "img/runner/runner3.webp","img/runner/runner4.webp"] },
+  { id: 1, name: "رانر طرح رنگین کمان",   cat: "runner",   catLabel: "رانر",         price: 2000000, oldPrice: 2270000, color: "#8C3B3B", images: ["img/runner/runner1.webp", "img/runner/runner2.webp", "img/runner/runner3.webp","img/runner/runner4.webp"] },
   { id: 2, name: "رومیزی طرح ابریشمی",     cat: "table",    catLabel: "رومیزی",     price: 500000, oldPrice: 565000, color: "#C99A3E", images: ["img/abrisham/ab1.webp", "img/abrisham/ab2.webp", "img/abrisham/ab3.webp"] },
-  { id: 3, name: "هدپیس (تل دست بافت)",       cat: "table",    catLabel: "تل مو",     price: 300000, color: "#5B6E4D", images: ["img/hedpis/hp1.webp","img/hedpis/hp2.webp","img/hedpis/hp3.webp"] },
+  { id: 3, name: "هدپیس (تل دست بافت)",       cat: "headband",    catLabel: "تل مو",     price: 300000, color: "#5B6E4D", images: ["img/hedpis/hp1.webp","img/hedpis/hp2.webp","img/hedpis/hp3.webp"] },
   { id: 4, name: "رومیزی طرح موکا",       cat: "table",    catLabel: "رومیزی",     price: 3000000, oldPrice: 3300000, color: "#6E2C2C", images: ["img/romizi/ro1.webp","img/romizi/ro2.webp","img/romizi/ro3.webp","img/romizi/ro4.webp"] },
   { id: 5, name: "رو میزی و رومبلی طرح گلریز",         cat: "table",  catLabel: "رومیزی",  price: 8800000,  oldPrice: 10000000 , color: "#C99A3E", images: ["img/romobli/rom1.webp" ,"img/romobli/rom2.webp"] } ,
-  { id: 6, name: " زیر بشقابی و زیر لیوانی طرح گلبرگ",        cat: "table", catLabel: "زیر بشقابی",   price: 1500000, color: "#8C3B3B", images: ["img/zir boshghabi/zir1.webp","img/zir boshghabi/zir2.webp","img/zir boshghabi/zir3.webp"] },
-  { id: 7, name: "اشارپ طرح ارغوان",      cat: "table",  catLabel: "اشارپ",  price: 1500000, color: "#5C4F3F", images: ["img/esharp 1/esh1.webp" , "img/esharp 1/esh2.webp" , "img/esharp 1/esh3.webp"] },
-  ,
+  { id: 6, name: " زیر بشقابی و زیر لیوانی طرح گلبرگ",        cat: "coaster", catLabel: "زیرلیوانی و زیربشقابی",   price: 1500000, color: "#8C3B3B", images: ["img/zir boshghabi/zir1.webp","img/zir boshghabi/zir2.webp","img/zir boshghabi/zir3.webp"] },
+  { id: 7, name: "اشارپ طرح ارغوان",      cat: "scarf",  catLabel: "اشارپ",  price: 1500000, color: "#5C4F3F", images: ["img/esharp 1/esh1.webp" , "img/esharp 1/esh2.webp" , "img/esharp 1/esh3.webp"] },
+  { id: 8, name: "کلاه سنتی طرح زمرد",   cat: "hat", catLabel: "کلاه", price: 650000, color: "#5B6E4D", images: ["img/kolah/kolah1.webp", "img/kolah/kolah2.webp", "img/kolah/kolah3.webp"] },
  /* { id: 8, name: "تل مو بافت پهن زمستانی",         cat: "headband", catLabel: "تل مو",      price: 165000, color: "#8C3B3B", images: [] },
   { id: 9, name: "تل مو بافت گره‌دار",              cat: "headband", catLabel: "تل مو",      price: 150000, color: "#5B6E4D", images: [] },
   { id: 10, name: "رومبلی بافت ست سه‌تکه",         cat: "sofa",     catLabel: "رومبلی",     price: 690000, color: "#6E2C2C", images: [] },
@@ -37,11 +37,13 @@ const PRODUCTS = [
 const CATEGORIES = [
   { key: "all",       label: "همه" },
   { key: "table",     label: "رومیزی" },
+  { key: "runner",    label: "رانر" },
   { key: "cupholder", label: "جالیوانی" },
-  { key: "coaster",   label: "زیرلیوانی" },
+  { key: "coaster",   label: "زیرلیوانی و زیربشقابی" },
   { key: "headband",  label: "تل مو" },
   { key: "sofa",      label: "رومبلی" },
   { key: "scarf",     label: "اشارپ" },
+  { key: "hat",       label: "کلاه" },
 ];
 
 const CART_KEY = "bafika_cart_v1";
@@ -679,11 +681,18 @@ function initProductsPage() {
   const toolbar = document.querySelector("[data-toolbar]");
   if (!grid || !toolbar) return;
 
-  toolbar.innerHTML = CATEGORIES.map((c, i) => `
-    <button class="chip" data-cat="${c.key}" aria-pressed="${i === 0 ? "true" : "false"}">${c.label}</button>
+  // فقط دسته‌هایی که حداقل یک محصول دارن نشون داده می‌شن
+  const visibleCats = CATEGORIES.filter((c) => c.key === "all" || PRODUCTS.some((p) => p && p.cat === c.key));
+
+  // اگه آدرس مثل products.html#headband بود، همون دسته از اول انتخاب می‌شه
+  const hashCat = decodeURIComponent(location.hash.replace("#", ""));
+  const startCat = visibleCats.some((c) => c.key === hashCat) ? hashCat : "all";
+
+  toolbar.innerHTML = visibleCats.map((c) => `
+    <button class="chip" data-cat="${c.key}" aria-pressed="${c.key === startCat ? "true" : "false"}">${c.label}</button>
   `).join("");
 
-  renderProductGrid(grid, PRODUCTS);
+  renderProductGrid(grid, startCat === "all" ? PRODUCTS : PRODUCTS.filter((p) => p.cat === startCat));
 
   toolbar.querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
