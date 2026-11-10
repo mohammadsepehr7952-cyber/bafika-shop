@@ -752,9 +752,10 @@ function initCartPage() {
       if (!p) return "";
       const qty = cart[id];
       subtotal += p.price * qty;
+      const hasImg = Array.isArray(p.images) && p.images.length > 0;
       return `
         <div class="cart-item" data-item="${p.id}">
-          <div class="thumb" style="background:${p.color}14;">${yarnSvg(p.color)}</div>
+          <div class="thumb"${hasImg ? "" : ` style="background:${p.color}14;"`}>${hasImg ? `<img src="${p.images[0]}" alt="" loading="lazy">` : yarnSvg(p.color)}</div>
           <div>
             <div class="name">${p.name}</div>
             <div class="cat">${p.catLabel} · ${formatPrice(p.price)}</div>
