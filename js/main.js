@@ -102,7 +102,7 @@ const BANNERS = [
 /* نظرات پیش‌فرض که همه بازدیدکننده‌ها می‌بینن (چون سایت بک‌اند نداره) */
 const SEED_REVIEWS = [
   { name: "نگار", rating: 5, text: "رومیزی که گرفتم عالی بود، دقیقاً مثل عکس‌های پیج. کیفیت بافتش فوق‌العادس.", date: "1404/04/10" },
-  { name: "مریم", rating: 5, text: "ست جالیوانی رو برای هدیه گرفتم، همه عاشقش شدن 🌸", date: "1404/03/22" },
+  { name: "مریم", rating: 5, text: "ست جالیوانی رو برای هدیه گرفتم، همه عاشقش شدن", date: "1404/03/22" },
   { name: "سارا", rating: 4, text: "کیفیت خوب بود، فقط ارسال یه‌کم طول کشید ولی ارزششو داشت.", date: "1404/02/15" },
 ];
 
@@ -709,6 +709,9 @@ function initProductsPage() {
   });
 }
 
+/* آیکون اینستاگرام (به‌جای ایموجی) برای دکمه‌هایی که با جاوااسکریپت ساخته می‌شن */
+const IC_INSTAGRAM = '<svg class="bf-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6"/></svg>';
+
 /* ---------- تعداد محصول روی کارت‌های دسته‌بندی صفحه اصلی ---------- */
 function initCatCounts() {
   document.querySelectorAll("[data-cat-count]").forEach((el) => {
@@ -777,7 +780,7 @@ function initCartPage() {
         <h3>خلاصه سفارش</h3>
         <div class="summary-row total"><span>جمع کالاها</span><span>${formatPrice(subtotalDisplay)}</span></div>
         <p class="form-note" style="margin:4px 0 0;">هزینه ارسال جدا محاسبه و توی دایرکت اینستاگرام اعلام می‌شه.</p>
-        <a href="checkout.html" class="btn btn-primary btn-block" style="margin-top:16px;">📷 ثبت سفارش در اینستاگرام</a>
+        <a href="checkout.html" class="btn btn-primary btn-block" style="margin-top:16px;">${IC_INSTAGRAM} ثبت سفارش در اینستاگرام</a>
         <a href="products.html" class="btn btn-outline btn-block" style="margin-top:10px;">ادامه خرید</a>
       </aside>
     `;

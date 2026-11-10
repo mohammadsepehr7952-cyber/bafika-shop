@@ -129,13 +129,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .nav-links a:hover::after,.nav-links a[aria-current="page"]::after{opacity:1;transform:translateY(0);}
 .nav-actions{display:flex;align-items:center;gap:14px;}
 .cart-link{
-  display:flex;align-items:center;gap:6px;font-weight:700;
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:44px;height:44px;padding:0;border-radius:50%;
   background:var(--surface);border:1px solid var(--line);
-  padding:8px 14px;border-radius:999px;
 }
+.cart-link .bf-ic{width:22px;height:22px;}
 .cart-count{
-  background:var(--wine);color:#fff;font-size:.75rem;font-weight:700;
-  min-width:20px;height:20px;border-radius:50%;
+  position:absolute;top:-5px;right:-5px;
+  background:var(--wine);color:#fff;font-size:.72rem;font-weight:700;line-height:1;
+  min-width:20px;height:20px;border-radius:50%;box-shadow:0 0 0 2px var(--cream);
   display:flex;align-items:center;justify-content:center;padding:0 4px;
 }
 .menu-toggle{display:none;background:none;border:none;font-size:1.6rem;color:var(--ink);}
@@ -683,3 +685,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 .product-thumb.carousel{touch-action:pan-y;cursor:grab;}
 .product-thumb.carousel:active{cursor:grabbing;}
+
+/* ---------- آیکون‌های SVG (جایگزین ایموجی) ---------- */
+.bf-ic{flex:none;vertical-align:-.2em;}
+.footer-grid li .bf-ic{margin-inline-end:6px;}
+.contact-info-card li .bf-ic{margin-top:3px;color:var(--wine);}
+.btn .bf-ic{margin-inline-end:8px;vertical-align:-.25em;}
